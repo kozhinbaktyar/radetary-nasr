@@ -315,15 +315,15 @@
     <aside class="no-print">
         <div class="sidebar-header">
             <h1 style="font-size: 1.25rem; font-weight: bold; color: var(--emerald-500);">🛒 سیستەمی دوکان</h1>
-            <p style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.25rem;">بەڕێوەبردنی دارایی و کۆگا</p>
+            <p style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.25rem;">بەڕێوەبردنی دارایی و کۆگا (تەواو سینک)</p>
         </div>
         <nav class="sidebar-nav">
-            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active">📊 داشبۆردی سەرەکی</button>
-            <button onclick="switchTab('inventory')" id="btn-inventory" class="nav-btn">📦 کۆگای کاڵاکان (مەواد)</button>
-            <button onclick="switchTab('invoice')" id="btn-invoice" class="nav-btn">📝 وەسڵی نوێ (POS)</button>
-            <button onclick="switchTab('customers')" id="btn-customers" class="nav-btn">👥 قەرزی کڕیاران</button>
-            <button onclick="switchTab('companies')" id="btn-companies" class="nav-btn">🏢 قەرزی کۆمپانیاکان</button>
-            <button onclick="switchTab('cashbook')" id="btn-cashbook" class="nav-btn">💵 سندوقی ڕۆژانە</button>
+            <button id="btn-dashboard" class="nav-btn active">📊 داشبۆردی سەرەکی</button>
+            <button id="btn-inventory" class="nav-btn">📦 کۆگای کاڵاکان (مەواد)</button>
+            <button id="btn-invoice" class="nav-btn">📝 وەسڵی نوێ (POS)</button>
+            <button id="btn-customers" class="nav-btn">👥 قەرزی کڕیاران</button>
+            <button id="btn-companies" class="nav-btn">🏢 قەرزی کۆمپانیاکان</button>
+            <button id="btn-cashbook" class="nav-btn">💵 سندوقی ڕۆژانە</button>
         </nav>
         <div style="padding: 1rem; border-top: 1px solid var(--slate-800); text-align: center; font-size: 0.75rem; color: var(--slate-500);">
             کۆژین ئۆسمان © 2026
@@ -384,15 +384,15 @@
             <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">تۆمار و کۆگای مەواد</h2>
                 <div style="display: flex; gap: 0.5rem;">
-                    <button onclick="openScanner('inventory-search')" class="btn btn-warning">📷 خوێندنەوەی کۆد</button>
-                    <button onclick="openAddProductModal()" class="btn btn-primary">+ زیادکردنی مەوادی نوێ</button>
+                    <button id="btn-inventory-scan" class="btn btn-warning">📷 خوێندنەوەی کۆد</button>
+                    <button id="btn-add-product-modal" class="btn btn-primary">+ زیادکردنی مەوادی نوێ</button>
                 </div>
             </div>
 
             <!-- گەڕان بە پارت نەمبەر یان ناو -->
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; background: white; padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200);">
-                <input type="text" id="inventory-search" oninput="renderInventory()" placeholder="گەڕان بەپێی پارت نەمبەر یان ناوی پارچە..." class="form-input" style="flex: 1; min-width: 250px;">
-                <button onclick="clearInventorySearch()" class="btn" style="background: var(--gray-200);">پاککردنەوە</button>
+                <input type="text" id="inventory-search" placeholder="گەڕان بەپێی پارت نەمبەر یان ناوی پارچە..." class="form-input" style="flex: 1; min-width: 250px;">
+                <button id="btn-clear-inventory-search" class="btn" style="background: var(--gray-200);">پاککردنەوە</button>
             </div>
 
             <!-- خشتەی مەوادەکان -->
@@ -422,11 +422,11 @@
                 <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); display: flex; flex-direction: column; gap: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <h3 style="font-size: 1.125rem; font-weight: bold;">کەرستەکانی ناو وەسڵەکە</h3>
-                        <button onclick="openScanner('pos-quick-scan')" class="btn btn-warning" style="padding: 0.35rem 0.75rem; font-size: 0.875rem;">📷 خستنە ناو وەسڵ بە کامێرا</button>
+                        <button id="btn-pos-quick-scan" class="btn btn-warning" style="padding: 0.35rem 0.75rem; font-size: 0.875rem;">📷 خستنە ناو وەسڵ بە کامێرا</button>
                     </div>
                     
                     <!-- فیلدێکی شاراوە بۆ وەرگرتنی سکانی خێرا -->
-                    <input type="hidden" id="pos-quick-scan" onchange="addScannedProductToInvoice()">
+                    <input type="hidden" id="pos-quick-scan">
 
                     <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.75rem; font-weight: bold; font-size: 0.875rem;">
                         <div style="grid-column: span 5;">ناوی کاڵا / پارت نەمبەر</div>
@@ -436,7 +436,7 @@
                     </div>
                     
                     <div id="invoice-items-container" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
-                    <button onclick="addInvoiceRow()" class="btn" style="background-color: var(--gray-100); color: var(--gray-700); align-self: flex-start;">+ زیادکردنی دێڕ</button>
+                    <button id="btn-add-invoice-row" class="btn" style="background-color: var(--gray-100); color: var(--gray-700); align-self: flex-start;">+ زیادکردنی دێڕ</button>
                 </div>
 
                 <!-- مینیوی تەسفیە حساب -->
@@ -456,7 +456,7 @@
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span>داشکاندن (د.ع):</span>
-                                <input type="number" id="invoice-discount" value="0" oninput="calculateInvoiceTotals()" class="form-input" style="width: 6rem; text-align: left;">
+                                <input type="number" id="invoice-discount" value="0" class="form-input" style="width: 6rem; text-align: left;">
                             </div>
                             <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--gray-200); padding-top: 0.75rem; font-weight: bold; font-size: 1rem;">
                                 <span>کۆی کۆتایی:</span>
@@ -465,7 +465,7 @@
                             <hr style="border-color: var(--gray-100);">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span>پارەی دراو (کاش):</span>
-                                <input type="number" id="invoice-paid" value="0" oninput="calculateInvoiceTotals()" class="form-input" style="width: 6rem; text-align: left;">
+                                <input type="number" id="invoice-paid" value="0" class="form-input" style="width: 6rem; text-align: left;">
                             </div>
                             <div style="display: flex; justify-content: space-between; color: var(--red-600); font-weight: bold; border-top: 1px solid var(--gray-200); padding-top: 0.75rem;">
                                 <span>بڕی ماوە بە قەرز:</span>
@@ -473,7 +473,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="saveAndPrintInvoice()" class="btn btn-primary" style="width: 100%; padding: 0.75rem 0;">🖨️ تۆمارکردن و چاپکردنی وەسڵ</button>
+                    <button id="btn-save-print-invoice" class="btn btn-primary" style="width: 100%; padding: 0.75rem 0;">🖨️ تۆمارکردن و چاپکردنی وەسڵ</button>
                 </div>
             </div>
         </section>
@@ -482,10 +482,10 @@
         <section id="tab-customers" class="hidden" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">بەشی قەرزی کڕیاران</h2>
-                <button onclick="openModal('customer-modal')" class="btn btn-primary">+ کڕیاری نوێ</button>
+                <button id="btn-open-cust-modal" class="btn btn-primary">+ کڕیاری نوێ</button>
             </div>
             <div class="table-container">
-                <input type="text" id="customer-search" oninput="renderCustomers()" placeholder="گەڕان بەپێی ناوی کڕیار یان مۆبایل..." class="form-input" style="max-width: 20rem; margin-bottom: 1rem;">
+                <input type="text" id="customer-search" placeholder="گەڕان بەپێی ناوی کڕیار یان مۆبایل..." class="form-input" style="max-width: 20rem; margin-bottom: 1rem;">
                 <table>
                     <thead>
                         <tr>
@@ -504,7 +504,7 @@
         <section id="tab-companies" class="hidden" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">قەرزی سەرشان بۆ کۆمپانیاکان</h2>
-                <button onclick="openModal('company-modal')" class="btn btn-primary">+ کۆمپانیای نوێ</button>
+                <button id="btn-open-comp-modal" class="btn btn-primary">+ کۆمپانیای نوێ</button>
             </div>
             <div class="table-container">
                 <table>
@@ -527,8 +527,8 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">سندوقی ڕۆژانە (Daily Cashbook)</h2>
                 <div style="display: flex; gap: 0.5rem;">
-                    <button onclick="openModal('cash-in-modal')" class="btn btn-primary" style="background-color: var(--emerald-600);">هاتنی پارە (+)</button>
-                    <button onclick="openModal('cash-out-modal')" class="btn btn-danger">خەرجی سندوق (-)</button>
+                    <button id="btn-cash-in-modal" class="btn btn-primary" style="background-color: var(--emerald-600);">هاتنی پارە (+)</button>
+                    <button id="btn-cash-out-modal" class="btn btn-danger">خەرجی سندوق (-)</button>
                 </div>
             </div>
             <div class="grid-cards" style="grid-template-columns: repeat(4, 1fr);">
@@ -585,7 +585,7 @@
             
             <div style="display: flex; gap: 0.5rem;">
                 <input type="text" id="prod-part-no" placeholder="ژمارەی پارچە (Part Number)" class="form-input" style="flex: 1;">
-                <button onclick="openScanner('prod-part-no')" class="btn btn-warning">📷 سکان</button>
+                <button id="btn-prod-part-no-scan" class="btn btn-warning">📷 سکان</button>
             </div>
             <input type="text" id="prod-name" placeholder="ناوی پارچە" class="form-input">
             <input type="number" id="prod-qty" placeholder="عەدەد (کۆگا)" class="form-input">
@@ -593,8 +593,8 @@
             <input type="number" id="prod-sell-price" placeholder="نرخی فرۆشتن" class="form-input">
             
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('product-modal')" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
-                <button onclick="saveProduct()" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-product-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-product" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -606,20 +606,20 @@
             <div id="reader"></div>
             <p id="scan-result" style="text-align: center; font-weight: bold; color: var(--emerald-600); margin-top: 0.5rem;"></p>
             <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
-                <button onclick="stopScanner()" class="btn btn-danger">داخستن</button>
+                <button id="btn-stop-scanner" class="btn btn-danger">داخستن</button>
             </div>
         </div>
     </div>
 
-    <!-- مۆداڵەکانی پێشوو -->
+    <!-- مۆداڵەکانی کڕیار و کۆمپانیا و سندوق -->
     <div id="customer-modal" class="modal hidden no-print">
         <div class="modal-content">
             <h3 style="font-weight: bold;">تۆمارکردنی کڕیاری نوێ</h3>
             <input type="text" id="new-cust-name" placeholder="ناوی تەواوی کڕیار" class="form-input">
             <input type="text" id="new-cust-phone" placeholder="ژمارەی مۆبایل" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('customer-modal')" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
-                <button onclick="saveCustomer()" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-customer-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-customer" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -631,8 +631,8 @@
             <input type="text" id="new-comp-contact" placeholder="ناوی مەندوب" class="form-input">
             <input type="text" id="new-comp-phone" placeholder="ژمارەی مۆبایل" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('company-modal')" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
-                <button onclick="saveCompany()" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-company-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-company" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -647,8 +647,8 @@
             </select>
             <input type="number" id="comp-trans-amount" placeholder="بڕی پارە" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('company-trans-modal')" class="btn" style="background: var(--gray-200);">داخستن</button>
-                <button onclick="saveCompanyTransaction()" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-company-trans-modal" class="btn" style="background: var(--gray-200);">داخستن</button>
+                <button id="btn-save-company-transaction" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -659,8 +659,8 @@
             <input type="hidden" id="selected-cust-id">
             <input type="number" id="cust-pay-amount" placeholder="بڕی پارەی وەرگیراو" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('customer-pay-modal')" class="btn" style="background: var(--gray-200);">داخستن</button>
-                <button onclick="saveCustomerPayment()" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-customer-pay-modal" class="btn" style="background: var(--gray-200);">داخستن</button>
+                <button id="btn-save-customer-payment" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -671,8 +671,8 @@
             <input type="number" id="cashbook-in-amount" placeholder="بڕی پارە" class="form-input">
             <input type="text" id="cashbook-in-desc" placeholder="تێبینی" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('cash-in-modal')" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
-                <button onclick="saveManualCash('in')" class="btn btn-primary">تۆمارکردن</button>
+                <button id="btn-close-cash-in-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-manual-cash-in" class="btn btn-primary">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -683,8 +683,8 @@
             <input type="number" id="cashbook-out-amount" placeholder="بڕی پارە" class="form-input">
             <input type="text" id="cashbook-out-desc" placeholder="تێبینی" class="form-input">
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                <button onclick="closeModal('cash-out-modal')" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
-                <button onclick="saveManualCash('out')" class="btn btn-danger">تۆمارکردن</button>
+                <button id="btn-close-cash-out-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-manual-cash-out" class="btn btn-danger">تۆمارکردن</button>
             </div>
         </div>
     </div>
@@ -726,36 +726,157 @@
         </div>
     </div>
 
-    <!-- ================= لۆجیکی JavaScript ================= -->
-    <script>
+    <!-- ================= لۆجیکی Firebase & JS ================= -->
+    <script type="module">
+        // لۆدکردنی فایەربەیس لە ڕێگەی مۆدیوڵی فەرمی CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // کانفیگی تایبەتی خۆت
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdMafXnwT8ZiUV0-Fkne-lPPiaa86ekEk",
+            authDomain: "game-55ea5.firebaseapp.com",
+            projectId: "game-55ea5",
+            storageBucket: "game-55ea5.firebasestorage.app",
+            messagingSenderId: "346984907289",
+            appId: "1:346984907289:web:1ecae8305b03f0ef9e6088",
+            measurementId: "G-Z8898Q6YF6"
+        };
+
+        // ئینیشیالایزکردنی ئەپ و داتابەیس
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // لۆکاڵ ئێستەیتی ئەپڵیکەیشن
         let appState = {
-            products: [
-                { id: "PROD_1", partNo: "88990-210", name: "فلانی توندکەرەوە (Toyota)", qty: 15, buyPrice: 12000, sellPrice: 18000 },
-                { id: "PROD_2", partNo: "77651-A2", name: "پلەگی تاقیکاری", qty: 45, buyPrice: 3500, sellPrice: 5000 }
-            ],
-            customers: [
-                { id: "CUST_1", name: "محەمەد قادر", phone: "07701548231", totalDebt: 120000 },
-                { id: "CUST_2", name: "ئاسۆ عەلی", phone: "07503341256", totalDebt: 0 }
-            ],
-            companies: [
-                { id: "COMP_1", name: "کۆمپانیای ئارام", contact: "شوان", phone: "07704505050", totalOwed: 450000 }
-            ],
+            products: [],
+            customers: [],
+            companies: [],
             invoices: [],
             cashBook: {
-                openingBalance: 250000,
-                transactions: [
-                    { type: 'in', amount: 250000, desc: 'سندوقی دەستپێکی کارکردن' }
-                ]
+                openingBalance: 0,
+                transactions: []
             }
         };
 
         let html5QrcodeScanner = null;
-        let activeTargetInputId = ""; // بۆ دیاریکردنی ئەوەی کام فیلد پارەکەی تیا پڕبکرێتەوە پاش سکان
+        let activeTargetInputId = "";
 
-        window.onload = function() {
+        // بەستنەوەی فەنکشنەکان بە لایەنی گڵۆباڵەوە بۆ وەڵامدانەوەی لۆجیکەکانی ناو HTML
+        window.switchTab = switchTab;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.openEditProductModal = openEditProductModal;
+        window.deleteProduct = deleteProduct;
+        window.openPayCustModal = openPayCustModal;
+        window.openCompTransModal = openCompTransModal;
+        window.removeInvoiceRow = removeInvoiceRow;
+        window.calculateInvoiceTotals = calculateInvoiceTotals;
+
+        // کاتی دەستپێکردنی ئەپەکە
+        window.addEventListener('DOMContentLoaded', () => {
+            setupRealtimeSync();
             addInvoiceRow();
-            updateUI();
-        };
+            setupEventListeners();
+        });
+
+        // گوێگرتن لە داتاکان بە شێوەی ڕیڵ-تایم (onSnapshot)
+        function setupRealtimeSync() {
+            // کاڵاکان
+            onSnapshot(collection(db, "products"), (snapshot) => {
+                appState.products = [];
+                snapshot.forEach(doc => appState.products.push({ id: doc.id, ...doc.data() }));
+                renderInventory();
+                calculateInvoiceTotals();
+            });
+
+            // کڕیاران
+            onSnapshot(collection(db, "customers"), (snapshot) => {
+                appState.customers = [];
+                snapshot.forEach(doc => appState.customers.push({ id: doc.id, ...doc.data() }));
+                renderCustomers();
+                renderInvoiceCustomers();
+                calculateOverallStats();
+            });
+
+            // کۆمپانیاکان
+            onSnapshot(collection(db, "companies"), (snapshot) => {
+                appState.companies = [];
+                snapshot.forEach(doc => appState.companies.push({ id: doc.id, ...doc.data() }));
+                renderCompanies();
+                calculateOverallStats();
+            });
+
+            // وەسڵەکان
+            onSnapshot(collection(db, "invoices"), (snapshot) => {
+                appState.invoices = [];
+                snapshot.forEach(doc => appState.invoices.push({ id: doc.id, ...doc.data() }));
+                renderRecentInvoices();
+            });
+
+            // سندوقی دارایی
+            onSnapshot(collection(db, "cashbook"), (snapshot) => {
+                appState.cashBook.transactions = [];
+                snapshot.forEach(doc => {
+                    if(doc.id === "config") {
+                        appState.cashBook.openingBalance = doc.data().openingBalance || 0;
+                    } else {
+                        appState.cashBook.transactions.push({ id: doc.id, ...doc.data() });
+                    }
+                });
+                renderCashbook();
+                calculateOverallStats();
+            });
+        }
+
+        // بەستنەوەی لیسنەرەکان بە دوگمەکانەوە بۆ کارکردنی مۆدیوڵار
+        function setupEventListeners() {
+            document.getElementById('btn-dashboard').addEventListener('click', () => switchTab('dashboard'));
+            document.getElementById('btn-inventory').addEventListener('click', () => switchTab('inventory'));
+            document.getElementById('btn-invoice').addEventListener('click', () => switchTab('invoice'));
+            document.getElementById('btn-customers').addEventListener('click', () => switchTab('customers'));
+            document.getElementById('btn-companies').addEventListener('click', () => switchTab('companies'));
+            document.getElementById('btn-cashbook').addEventListener('click', () => switchTab('cashbook'));
+
+            document.getElementById('btn-inventory-scan').addEventListener('click', () => openScanner('inventory-search'));
+            document.getElementById('btn-add-product-modal').addEventListener('click', openAddProductModal);
+            document.getElementById('btn-clear-inventory-search').addEventListener('click', clearInventorySearch);
+            document.getElementById('inventory-search').addEventListener('input', renderInventory);
+            document.getElementById('customer-search').addEventListener('input', renderCustomers);
+
+            document.getElementById('btn-pos-quick-scan').addEventListener('click', () => openScanner('pos-quick-scan'));
+            document.getElementById('btn-add-invoice-row').addEventListener('click', addInvoiceRow);
+            document.getElementById('btn-save-print-invoice').addEventListener('click', saveAndPrintInvoice);
+            document.getElementById('invoice-discount').addEventListener('input', calculateInvoiceTotals);
+            document.getElementById('invoice-paid').addEventListener('input', calculateInvoiceTotals);
+
+            document.getElementById('btn-prod-part-no-scan').addEventListener('click', () => openScanner('prod-part-no'));
+            document.getElementById('btn-close-product-modal').addEventListener('click', () => closeModal('product-modal'));
+            document.getElementById('btn-save-product').addEventListener('click', saveProduct);
+            document.getElementById('btn-stop-scanner').addEventListener('click', stopScanner);
+
+            document.getElementById('btn-open-cust-modal').addEventListener('click', () => openModal('customer-modal'));
+            document.getElementById('btn-close-customer-modal').addEventListener('click', () => closeModal('customer-modal'));
+            document.getElementById('btn-save-customer').addEventListener('click', saveCustomer);
+
+            document.getElementById('btn-open-comp-modal').addEventListener('click', () => openModal('company-modal'));
+            document.getElementById('btn-close-company-modal').addEventListener('click', () => closeModal('company-modal'));
+            document.getElementById('btn-save-company').addEventListener('click', saveCompany);
+
+            document.getElementById('btn-close-company-trans-modal').addEventListener('click', () => closeModal('company-trans-modal'));
+            document.getElementById('btn-save-company-transaction').addEventListener('click', saveCompanyTransaction);
+
+            document.getElementById('btn-close-customer-pay-modal').addEventListener('click', () => closeModal('customer-pay-modal'));
+            document.getElementById('btn-save-customer-payment').addEventListener('click', saveCustomerPayment);
+
+            document.getElementById('btn-cash-in-modal').addEventListener('click', () => openModal('cash-in-modal'));
+            document.getElementById('btn-cash-out-modal').addEventListener('click', () => openModal('cash-out-modal'));
+            document.getElementById('btn-close-cash-in-modal').addEventListener('click', () => closeModal('cash-in-modal'));
+            document.getElementById('btn-close-cash-out-modal').addEventListener('click', () => closeModal('cash-out-modal'));
+            
+            document.getElementById('btn-save-manual-cash-in').addEventListener('click', () => saveManualCash('in'));
+            document.getElementById('btn-save-manual-cash-out').addEventListener('click', () => saveManualCash('out'));
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('main > section').forEach(section => section.classList.add('hidden'));
@@ -765,42 +886,32 @@
             document.getElementById(`btn-${tabId}`).classList.add('active');
         }
 
-        function updateUI() {
-            calculateOverallStats();
-            renderInvoiceCustomers();
-            renderCustomers();
-            renderCompanies();
-            renderCashbook();
-            renderRecentInvoices();
-            renderInventory();
-        }
-
         function calculateOverallStats() {
-            let totalCustDebt = appState.customers.reduce((acc, c) => acc + Number(c.totalDebt), 0);
-            let totalCompOwed = appState.companies.reduce((acc, c) => acc + Number(c.totalOwed), 0);
+            let totalCustDebt = appState.customers.reduce((acc, c) => acc + Number(c.totalDebt || 0), 0);
+            let totalCompOwed = appState.companies.reduce((acc, c) => acc + Number(c.totalOwed || 0), 0);
             
-            let cashIn = appState.cashBook.transactions.filter(t => t.type === 'in').reduce((acc, t) => acc + Number(t.amount), 0);
-            let cashOut = appState.cashBook.transactions.filter(t => t.type === 'out').reduce((acc, t) => acc + Number(t.amount), 0);
-            let netCash = cashIn - cashOut;
+            let cashIn = appState.cashBook.transactions.filter(t => t.type === 'in').reduce((acc, t) => acc + Number(t.amount || 0), 0);
+            let cashOut = appState.cashBook.transactions.filter(t => t.type === 'out').reduce((acc, t) => acc + Number(t.amount || 0), 0);
+            let netCash = appState.cashBook.openingBalance + cashIn - cashOut;
 
             document.getElementById('card-customer-debt').innerText = totalCustDebt.toLocaleString() + " د.ع";
             document.getElementById('card-company-debt').innerText = totalCompOwed.toLocaleString() + " د.ع";
             document.getElementById('card-cash-balance').innerText = netCash.toLocaleString() + " د.ع";
         }
 
-        /* ================= بەشی لۆجیکی کۆگا (Inventory) ================= */
+        /* ================= بەشی کۆگا (Inventory) ================= */
         function renderInventory() {
             const tbody = document.getElementById('inventory-tbody');
             const searchVal = document.getElementById('inventory-search').value.toLowerCase();
             tbody.innerHTML = '';
 
             const filtered = appState.products.filter(p => 
-                p.name.toLowerCase().includes(searchVal) || 
-                p.partNo.toLowerCase().includes(searchVal)
+                (p.name || '').toLowerCase().includes(searchVal) || 
+                (p.partNo || '').toLowerCase().includes(searchVal)
             );
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1.5rem;">هیچ مەوادێک نەدۆزرایەوە!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1.5rem;">هیچ مەوادێک لە کۆگادا نییە!</td></tr>`;
                 return;
             }
 
@@ -853,7 +964,7 @@
             openModal('product-modal');
         }
 
-        function saveProduct() {
+        async function saveProduct() {
             const id = document.getElementById('edit-prod-id').value;
             const partNo = document.getElementById('prod-part-no').value.trim();
             const name = document.getElementById('prod-name').value.trim();
@@ -866,81 +977,57 @@
                 return;
             }
 
-            if (id) {
-                // دەستکاریکردن
-                const prodIndex = appState.products.findIndex(p => p.id === id);
-                if (prodIndex > -1) {
-                    appState.products[prodIndex] = { id, partNo, name, qty, buyPrice, sellPrice };
-                }
-            } else {
-                // نوێ
-                appState.products.push({
-                    id: 'PROD_' + Date.now(),
-                    partNo, name, qty, buyPrice, sellPrice
-                });
-            }
+            const docId = id ? id : 'PROD_' + Date.now();
+            await setDoc(doc(db, "products", docId), { partNo, name, qty, buyPrice, sellPrice });
 
             closeModal('product-modal');
-            updateUI();
         }
 
-        function deleteProduct(id) {
-            if (confirm("دڵنیای لە سڕینەوەی ئەم مەوادە لە ناو کۆگا؟")) {
-                appState.products = appState.products.filter(p => p.id !== id);
-                updateUI();
+        async function deleteProduct(id) {
+            if (confirm("دڵنیای لە سڕینەوەی ئەم مەوادە لە سەر فایەربەیس؟")) {
+                await deleteDoc(doc(db, "products", id));
             }
         }
 
-        /* ================= لۆجیکی کامێرا و سکانی بارکۆد ================= */
+        /* ================= خوێندنەوەی بارکۆد بە کامێرا ================= */
         function openScanner(targetInputId) {
             activeTargetInputId = targetInputId;
             openModal('scanner-modal');
-            
             document.getElementById('scan-result').innerText = "تکایە بارکۆدەکە بخەرە بەر کامێرا...";
 
             html5QrcodeScanner = new Html5Qrcode("reader");
             html5QrcodeScanner.start(
-                { facingMode: "environment" }, // کامێرای پشتەوەی مۆبایل
-                {
-                    fps: 10,
-                    qrbox: { width: 250, height: 150 }
-                },
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 150 } },
                 onScanSuccess,
                 onScanFailure
             ).catch(err => {
-                alert("کێشەیەک لە کارپێکردنی کامێرا هەیە: " + err);
+                alert("کێشە لە کردنەوەی کامێرا: " + err);
                 closeModal('scanner-modal');
             });
         }
 
-        function onScanSuccess(decodedText, decodedResult) {
+        function onScanSuccess(decodedText) {
             document.getElementById('scan-result').innerText = "کۆد خوێندرایەوە: " + decodedText;
-            
-            // دانانی دەقەکە لە ناو فیلدەکەدا
             const inputField = document.getElementById(activeTargetInputId);
             if (inputField) {
                 inputField.value = decodedText;
-                // گەر فیلدەکە هی بەشی POS بوو بە ئۆتۆماتیکی بابەتەکە بخاتە ناو فایلی کڕینەکە
                 if (activeTargetInputId === 'pos-quick-scan') {
                     addScannedProductToInvoice(decodedText);
                 } else if (activeTargetInputId === 'inventory-search') {
                     renderInventory();
                 }
             }
-
             stopScanner();
         }
 
-        function onScanFailure(error) {
-            // ئەتوانرێت لێرەدا بێدەنگ بکرێت بۆ ئەوەی ڕیکۆردی زۆر پڕ نەبێتەوە کاتێ لە هەوڵداندایە بۆ فۆکەسکردن
-        }
+        function onScanFailure() {}
 
         function stopScanner() {
             if (html5QrcodeScanner) {
                 html5QrcodeScanner.stop().then(() => {
                     closeModal('scanner-modal');
-                }).catch(err => {
-                    console.log("Error stopping scanner", err);
+                }).catch(() => {
                     closeModal('scanner-modal');
                 });
             } else {
@@ -948,15 +1035,13 @@
             }
         }
 
-        // زیادکردنی کاڵای سکانکراوی خێرا بۆ وەسڵ لە بەشی POS
         function addScannedProductToInvoice(barcodeValue) {
             const product = appState.products.find(p => p.partNo === barcodeValue);
             if (!product) {
-                alert("ئەم بارکۆدە (پارت نەمبەرە) لە کۆگادا تۆمار نەکراوە!");
+                alert("ئەم بارکۆدە لە کۆگادا پاشەکەوت نەکراوە!");
                 return;
             }
 
-            // گەر لە ناو لیستەکەدا هەبوو تەنها دانەیەکی بۆ زیاد بکە
             const rows = document.querySelectorAll('.invoice-item-row');
             let foundRow = false;
             rows.forEach(row => {
@@ -968,7 +1053,6 @@
                 }
             });
 
-            // ئەگەر لەناو لیستەکەدا نەبوو، یەکێکی نوێی بۆ دروست بکە
             if (!foundRow) {
                 const container = document.getElementById('invoice-items-container');
                 const rowId = 'row_' + Date.now();
@@ -982,11 +1066,10 @@
                 `;
                 container.insertAdjacentHTML('beforeend', rowHtml);
             }
-
             calculateInvoiceTotals();
         }
 
-        /* ================= لۆجیکەکانی تری وەسڵ و کڕیار ================= */
+        /* ================= وەسڵ و لۆجیکی فرۆشتن (POS) ================= */
         function renderInvoiceCustomers() {
             const select = document.getElementById('invoice-customer-select');
             select.innerHTML = '<option value="walk-in">کڕیاری ئاسایی (نەختینە)</option>';
@@ -1034,12 +1117,13 @@
             document.getElementById('invoice-debt').innerText = debt.toLocaleString() + " د.ع";
         }
 
-        function saveAndPrintInvoice() {
+        async function saveAndPrintInvoice() {
             const customerId = document.getElementById('invoice-customer-select').value;
             let customerName = "کڕیاری ئاسایی";
+            let cObj = null;
             
             if (customerId !== 'walk-in') {
-                const cObj = appState.customers.find(c => c.id === customerId);
+                cObj = appState.customers.find(c => c.id === customerId);
                 if (cObj) customerName = cObj.name;
             }
 
@@ -1068,48 +1152,50 @@
 
             if (debt > 0) {
                 if (customerId === 'walk-in') {
-                    alert("ناتوانیت قەرز بۆ کڕیاری نەناسراو بنووسیت، تکایە کڕیار دەستنیشان بکە!");
+                    alert("کڕیاری نەختینە ناتوانێت قەرز ببات، تکایە کڕیارێکی دیاریکراو دابنێ!");
                     return;
                 }
-                const cObj = appState.customers.find(c => c.id === customerId);
-                if (cObj) cObj.totalDebt += debt;
+                // نوێکردنەوەی قەرزی کڕیار لەسەر فایەربەیس
+                await updateDoc(doc(db, "customers", customerId), {
+                    totalDebt: (cObj.totalDebt || 0) + debt
+                });
             }
 
             if (paid > 0) {
-                appState.cashBook.transactions.push({
+                await addDoc(collection(db, "cashbook"), {
                     type: 'in',
                     amount: paid,
-                    desc: `فرۆشتنی وەسڵ بە کڕیار: ${customerName}`
+                    desc: `بڕینی وەسڵ بۆ کڕیار: ${customerName}`,
+                    timestamp: Date.now()
                 });
             }
 
             const invoiceId = 'INV-' + (appState.invoices.length + 1001);
-            const newInvoice = { invoiceId, customerName, date: new Date().toLocaleDateString('ku-IQ'), items, subtotal, discount, finalAmount, paid, debt };
-            appState.invoices.push(newInvoice);
-
-            // کەمکردنەوەی ژمارەی کاڵاکان لە کۆگا گەر لەوێ بوون
-            items.forEach(it => {
-                const dbProduct = appState.products.find(p => it.name.includes(p.name));
-                if (dbProduct) {
-                    dbProduct.qty = Math.max(0, dbProduct.qty - it.qty);
-                }
+            const dateStr = new Date().toLocaleDateString('ku-IQ');
+            
+            await setDoc(doc(db, "invoices", invoiceId), {
+                invoiceId, customerName, date: dateStr, items, subtotal, discount, finalAmount, paid, debt
             });
 
-            // لاپەڕەی چاپکردن
-            document.getElementById('print-date').innerText = newInvoice.date;
+            // کەمکردنەوەی مەوجود لە کۆگا
+            for (const it of items) {
+                const dbProduct = appState.products.find(p => it.name.includes(p.name));
+                if (dbProduct) {
+                    await updateDoc(doc(db, "products", dbProduct.id), {
+                        qty: Math.max(0, dbProduct.qty - it.qty)
+                    });
+                }
+            }
+
+            // ئامادەکردنی پرینت
+            document.getElementById('print-date').innerText = dateStr;
             document.getElementById('print-customer').innerText = customerName;
             document.getElementById('print-inv-id').innerText = invoiceId;
 
             const printTbody = document.getElementById('print-items-tbody');
             printTbody.innerHTML = '';
             items.forEach(it => {
-                printTbody.innerHTML += `
-                    <tr>
-                        <td>${it.name}</td>
-                        <td style="text-align: center;">${it.qty}</td>
-                        <td style="text-align: left;">${it.price.toLocaleString()}</td>
-                    </tr>
-                `;
+                printTbody.innerHTML += `<tr><td>${it.name}</td><td style="text-align: center;">${it.qty}</td><td style="text-align: left;">${it.price.toLocaleString()}</td></tr>`;
             });
 
             document.getElementById('print-subtotal').innerText = subtotal.toLocaleString() + " د.ع";
@@ -1127,14 +1213,13 @@
             document.getElementById('invoice-paid').value = '0';
             addInvoiceRow();
             calculateInvoiceTotals();
-            updateUI();
         }
 
         function renderRecentInvoices() {
             const tbody = document.getElementById('recent-invoices-tbody');
             tbody.innerHTML = '';
             if (appState.invoices.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1rem;">تا ئێستا هیچ وەسڵێک تۆمار نەکراوە.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1rem;">هیچ وەسڵێک تۆمار نەکراوە.</td></tr>`;
                 return;
             }
             [...appState.invoices].reverse().slice(0, 5).forEach(inv => {
@@ -1142,28 +1227,29 @@
                     <tr style="font-size: 0.875rem;">
                         <td style="font-weight: bold; color: var(--slate-500);">${inv.invoiceId}</td>
                         <td>${inv.customerName}</td>
-                        <td style="font-weight: bold;">${inv.finalAmount.toLocaleString()}</td>
-                        <td style="color: var(--emerald-600);">${inv.paid.toLocaleString()}</td>
-                        <td style="color: var(--red-600);">${inv.debt.toLocaleString()}</td>
+                        <td style="font-weight: bold;">${(inv.finalAmount || 0).toLocaleString()}</td>
+                        <td style="color: var(--emerald-600);">${(inv.paid || 0).toLocaleString()}</td>
+                        <td style="color: var(--red-600);">${(inv.debt || 0).toLocaleString()}</td>
                         <td style="color: var(--gray-500);">${inv.date}</td>
                     </tr>
                 `;
             });
         }
 
+        /* ================= بەشی کڕیاران ================= */
         function renderCustomers() {
             const tbody = document.getElementById('customers-tbody');
             const searchVal = document.getElementById('customer-search').value.toLowerCase();
             tbody.innerHTML = '';
 
-            const filtered = appState.customers.filter(c => c.name.toLowerCase().includes(searchVal) || c.phone.includes(searchVal));
+            const filtered = appState.customers.filter(c => (c.name || '').toLowerCase().includes(searchVal) || (c.phone || '').includes(searchVal));
 
             filtered.forEach(c => {
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
                         <td style="font-weight: bold;">${c.name}</td>
                         <td>${c.phone}</td>
-                        <td style="color: var(--red-600); font-weight: bold;">${c.totalDebt.toLocaleString()} د.ع</td>
+                        <td style="color: var(--red-600); font-weight: bold;">${(c.totalDebt || 0).toLocaleString()} د.ع</td>
                         <td>
                             <button onclick="openPayCustModal('${c.id}')" class="btn" style="background-color: #ecfdf5; color: var(--emerald-600);">💵 وەرگرتنەوەی قەرز</button>
                         </td>
@@ -1172,17 +1258,16 @@
             });
         }
 
-        function saveCustomer() {
+        async function saveCustomer() {
             const name = document.getElementById('new-cust-name').value;
             const phone = document.getElementById('new-cust-phone').value;
-
             if (!name) return;
 
-            appState.customers.push({ id: 'CUST_' + Date.now(), name, phone, totalDebt: 0 });
+            const cid = 'CUST_' + Date.now();
+            await setDoc(doc(db, "customers", cid), { name, phone, totalDebt: 0 });
             closeModal('customer-modal');
             document.getElementById('new-cust-name').value = '';
             document.getElementById('new-cust-phone').value = '';
-            updateUI();
         }
 
         function openPayCustModal(custId) {
@@ -1190,23 +1275,22 @@
             openModal('customer-pay-modal');
         }
 
-        function saveCustomerPayment() {
+        async function saveCustomerPayment() {
             const custId = document.getElementById('selected-cust-id').value;
             const amount = Number(document.getElementById('cust-pay-amount').value) || 0;
-
             if (amount <= 0) return;
 
             const c = appState.customers.find(cust => cust.id === custId);
             if (c) {
-                if (amount > c.totalDebt) return alert("ئەم کڕیارە ئەوەندە قەرز نییە!");
-                c.totalDebt -= amount;
-                appState.cashBook.transactions.push({ type: 'in', amount, desc: `وەرگرتنەوەی قەرز لە کڕیار: ${c.name}` });
+                if (amount > c.totalDebt) return alert("بڕی پارەکە زیاترە لە قەرزەکە!");
+                await updateDoc(doc(db, "customers", custId), { totalDebt: c.totalDebt - amount });
+                await addDoc(collection(db, "cashbook"), { type: 'in', amount, desc: `وەرگرتنەوەی قەرز لە کڕیار: ${c.name}`, timestamp: Date.now() });
                 closeModal('customer-pay-modal');
                 document.getElementById('cust-pay-amount').value = '';
-                updateUI();
             }
         }
 
+        /* ================= بەشی کۆمپانیاکان ================= */
         function renderCompanies() {
             const tbody = document.getElementById('companies-tbody');
             tbody.innerHTML = '';
@@ -1216,7 +1300,7 @@
                         <td style="font-weight: bold;">${comp.name}</td>
                         <td>${comp.contact}</td>
                         <td>${comp.phone}</td>
-                        <td style="color: var(--orange-600); font-weight: bold;">${comp.totalOwed.toLocaleString()} د.ع</td>
+                        <td style="color: var(--orange-600); font-weight: bold;">${(comp.totalOwed || 0).toLocaleString()} د.ع</td>
                         <td>
                             <button onclick="openCompTransModal('${comp.id}')" class="btn" style="background-color: var(--orange-50); color: var(--orange-600);">🔄 مامەڵەی نوێ</button>
                         </td>
@@ -1225,19 +1309,18 @@
             });
         }
 
-        function saveCompany() {
+        async function saveCompany() {
             const name = document.getElementById('new-comp-name').value;
             const contact = document.getElementById('new-comp-contact').value;
             const phone = document.getElementById('new-comp-phone').value;
-
             if (!name) return;
 
-            appState.companies.push({ id: 'COMP_' + Date.now(), name, contact, phone, totalOwed: 0 });
+            const compId = 'COMP_' + Date.now();
+            await setDoc(doc(db, "companies", compId), { name, contact, phone, totalOwed: 0 });
             closeModal('company-modal');
             document.getElementById('new-comp-name').value = '';
             document.getElementById('new-comp-contact').value = '';
             document.getElementById('new-comp-phone').value = '';
-            updateUI();
         }
 
         function openCompTransModal(compId) {
@@ -1245,35 +1328,37 @@
             openModal('company-trans-modal');
         }
 
-        function saveCompanyTransaction() {
+        async function saveCompanyTransaction() {
             const compId = document.getElementById('selected-comp-id').value;
             const type = document.getElementById('comp-trans-type').value;
             const amount = Number(document.getElementById('comp-trans-amount').value) || 0;
-
             if (amount <= 0) return;
 
             const comp = appState.companies.find(c => c.id === compId);
             if (comp) {
                 if (type === 'pay') {
-                    comp.totalOwed = Math.max(0, comp.totalOwed - amount);
-                    appState.cashBook.transactions.push({ type: 'out', amount, desc: `دانەوەی قەرزی کۆمپانیای: ${comp.name}` });
+                    await updateDoc(doc(db, "companies", compId), { totalOwed: Math.max(0, (comp.totalOwed || 0) - amount) });
+                    await addDoc(collection(db, "cashbook"), { type: 'out', amount, desc: `دانەوەی قەرزی کۆمپانیا: ${comp.name}`, timestamp: Date.now() });
                 } else {
-                    comp.totalOwed += amount;
+                    await updateDoc(doc(db, "companies", compId), { totalOwed: (comp.totalOwed || 0) + amount });
                 }
                 closeModal('company-trans-modal');
                 document.getElementById('comp-trans-amount').value = '';
-                updateUI();
             }
         }
 
+        /* ================= بەشی سندوق (Cashbook) ================= */
         function renderCashbook() {
             const tbody = document.getElementById('cashflow-tbody');
             tbody.innerHTML = '';
             let totalIn = 0, totalOut = 0;
 
-            appState.cashBook.transactions.forEach(t => {
-                if (t.type === 'in') totalIn += t.amount;
-                if (t.type === 'out') totalOut += t.amount;
+            // ڕیزکردنی ترانزاکشنەکان بەپێی کات
+            const sortedTrans = [...appState.cashBook.transactions].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            sortedTrans.forEach(t => {
+                if (t.type === 'in') totalIn += Number(t.amount || 0);
+                if (t.type === 'out') totalOut += Number(t.amount || 0);
 
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
@@ -1282,9 +1367,9 @@
                                 ${t.type === 'in' ? 'هاتوو (+)' : 'خەرجی (-)'}
                             </span>
                         </td>
-                        <td style="font-weight: bold;">${t.amount.toLocaleString()} د.ع</td>
-                        <td>${t.desc}</td>
-                        <td style="color: var(--gray-500); font-size: 0.75rem;">${new Date().toLocaleTimeString('ku-IQ')}</td>
+                        <td style="font-weight: bold;">${Number(t.amount || 0).toLocaleString()} د.ع</td>
+                        <td>${t.desc || ''}</td>
+                        <td style="color: var(--gray-500); font-size: 0.75rem;">${new Date(t.timestamp || Date.now()).toLocaleTimeString('ku-IQ')}</td>
                     </tr>
                 `;
             });
@@ -1298,21 +1383,20 @@
             document.getElementById('cb-final').innerText = finalCash.toLocaleString() + " د.ع";
         }
 
-        function saveManualCash(type) {
+        async function saveManualCash(type) {
             const amountInput = type === 'in' ? 'cashbook-in-amount' : 'cashbook-out-amount';
             const descInput = type === 'in' ? 'cashbook-in-desc' : 'cashbook-out-desc';
             const modalId = type === 'in' ? 'cash-in-modal' : 'cash-out-modal';
 
             const amount = Number(document.getElementById(amountInput).value) || 0;
             const desc = document.getElementById(descInput).value || (type === 'in' ? 'هاتنی کاشی دەستی' : 'خەرجی دەستی');
-
             if (amount <= 0) return;
 
-            appState.cashBook.transactions.push({ type, amount, desc });
+            await addDoc(collection(db, "cashbook"), { type, amount, desc, timestamp: Date.now() });
+            
             closeModal(modalId);
             document.getElementById(amountInput).value = '';
             document.getElementById(descInput).value = '';
-            updateUI();
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
