@@ -148,7 +148,7 @@
         /* کاردەکان (Cards) */
         .grid-cards {
             display: grid;
-            grid-template-cols: 1fr;
+            grid-template-columns: 1fr;
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -350,6 +350,30 @@
             overflow: hidden;
         }
 
+        /* ستایلی لاپەڕەی Login */
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            background-color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            max-width: 24rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
         /* ستایلی پرنت بۆ گشت بەشەکان */
         #custom-print-area {
             display: none;
@@ -402,19 +426,49 @@
 </head>
 <body>
 
+    <!-- ================= لاپەڕەی چوونەژوورەوە (Login Screen) ================= -->
+    <div id="login-screen" class="no-print">
+        <div class="login-card">
+            <div style="text-align: center;">
+                <h1 style="font-size: 1.5rem; font-weight: bold; color: var(--emerald-600);">🛒 ڕاێتەری ناصر</h1>
+                <p style="font-size: 0.875rem; color: var(--slate-500); margin-top: 0.25rem;">چوونەژوورەوە بۆ سیستەم</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.25rem;">ناوی بەکارهێنەر</label>
+                    <input type="text" id="login-username" class="form-input" placeholder="ناوەکەت بنووسە">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.25rem;">ووشەی مرور (Password)</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="پاسۆردەکەت بنووسە">
+                </div>
+            </div>
+            <p id="login-error" style="color: var(--red-600); font-size: 0.8rem; text-align: center;" class="hidden">ناوی بەکارهێنەر یان پاسۆرد هەڵەیە!</p>
+            <button id="btn-login-submit" class="btn btn-primary" style="padding: 0.75rem; width: 100%;">چوونەژوورەوە</button>
+        </div>
+    </div>
+
     <!-- ١. مینیوی تەنیشت (Sidebar) -->
     <aside class="no-print">
         <div class="sidebar-header">
             <h1 style="font-size: 1.25rem; font-weight: bold; color: var(--emerald-500);">🛒 ڕاێتەری ناصر</h1>
             <p style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.25rem;">بەڕێوەبردنی دارایی و کۆگا </p>
+            <div style="margin-top: 0.75rem; padding: 0.5rem; background: var(--slate-800); border-radius: 0.375rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p id="user-display-name" style="font-size: 0.85rem; font-weight: bold; color: white;">...</p>
+                    <p id="user-display-role" style="font-size: 0.7rem; color: var(--emerald-500);">...</p>
+                </div>
+                <button id="btn-logout" class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">دەرچوون</button>
+            </div>
         </div>
         <nav class="sidebar-nav">
             <button id="btn-dashboard" class="nav-btn active">📊 داشبۆردی سەرەکی</button>
             <button id="btn-inventory" class="nav-btn">📦 کۆگای کاڵاکان (مەواد)</button>
             <button id="btn-invoice" class="nav-btn">📝 وەسڵی نوێ (POS)</button>
             <button id="btn-customers" class="nav-btn">👥 قەرزی کڕیاران</button>
-            <button id="btn-companies" class="nav-btn">🏢 قەرزی کۆمپانیاکان</button>
-            <button id="btn-cashbook" class="nav-btn">💵 سندوقی ڕۆژانە</button>
+            <button id="btn-companies" class="nav-btn admin-only">🏢 قەرزی کۆمپانیاکان</button>
+            <button id="btn-cashbook" class="nav-btn admin-only">💵 سندوقی ڕۆژانە</button>
+            <button id="btn-users" class="nav-btn admin-only">👤 بەکارهێنەران</button>
         </nav>
         <div style="padding: 1rem; border-top: 1px solid var(--slate-800); text-align: center; font-size: 0.75rem; color: var(--slate-500);">
             کۆژین بەختیار
@@ -429,7 +483,7 @@
         <section id="tab-dashboard" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <h2 style="font-size: 1.5rem; font-weight: bold;">داشبۆردی سەرەکی</h2>
             
-            <div class="grid-cards">
+            <div class="grid-cards admin-only">
                 <div class="stat-card">
                     <div>
                         <p style="font-size: 0.875rem; color: var(--slate-500);">کۆی قەرزی کڕیاران</p>
@@ -451,6 +505,15 @@
                     </div>
                     <span class="card-icon" style="background-color: #ecfdf5;">💵</span>
                 </div>
+            </div>
+
+            <!-- بەشی زیادکراو: دوگمەی ڕاپۆرتەکان لە لاپەڕەی سەرەکی -->
+            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap; background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <h3 style="width: 100%; font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem;">📊 ڕاپۆرتەکان و چاپکردنی گشتی</h3>
+                <button id="btn-print-daily" class="btn btn-warning">📊 ڕاپۆرتی ڕۆژانە</button>
+                <button id="btn-print-weekly" class="btn btn-warning">📊 ڕاپۆرتی هەفتانە</button>
+                <button id="btn-print-monthly" class="btn btn-warning">📊 ڕاپۆرتی مانگانە</button>
+                <button id="btn-print-all-bulk" class="btn btn-blue">🖨️ پرنتی گشتی هەموو پسوڵەکان</button>
             </div>
 
             <div class="table-container">
@@ -477,7 +540,7 @@
                 <h2 style="font-size: 1.5rem; font-weight: bold;">تۆمار و کۆگای مەواد</h2>
                 <div style="display: flex; gap: 0.5rem;">
                     <button id="btn-inventory-scan" class="btn btn-warning">📷 خوێندنەوەی کۆد</button>
-                    <button id="btn-add-product-modal" class="btn btn-primary">+ زیادکردنی مەوادی نوێ</button>
+                    <button id="btn-add-product-modal" class="btn btn-primary admin-only">+ زیادکردنی مەوادی نوێ</button>
                 </div>
             </div>
 
@@ -495,9 +558,9 @@
                             <th>ژمارەی پارچە (Part No.)</th>
                             <th>ناوی پارچە</th>
                             <th>عەدەد (مەوجود)</th>
-                            <th>نرخی کڕین (د.ع)</th>
+                            <th class="admin-only">نرخی کڕین (د.ع)</th>
                             <th>نرخی فرۆشتن (د.ع)</th>
-                            <th>کردارەکان</th>
+                            <th class="admin-only">کردارەکان</th>
                         </tr>
                     </thead>
                     <tbody id="inventory-tbody"></tbody>
@@ -583,14 +646,6 @@
                 <button id="btn-open-cust-modal" class="btn btn-primary">+ کڕیاری نوێ</button>
             </div>
 
-            <!-- بەشی نوێ: پانێڵی دروستکردنی ڕاپۆرتەکان و پرنتی گشتی -->
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; background: white; padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200);">
-                <button id="btn-print-daily" class="btn btn-warning">📊 ڕاپۆرتی ڕۆژانە</button>
-                <button id="btn-print-weekly" class="btn btn-warning">📊 ڕاپۆرتی هەفتانە</button>
-                <button id="btn-print-monthly" class="btn btn-warning">📊 ڕاپۆرتی مانگانە</button>
-                <button id="btn-print-all-bulk" class="btn btn-blue">🖨️ پرنتی گشتی هەموو پسوڵەکان</button>
-            </div>
-
             <div class="table-container">
                 <input type="text" id="customer-search" placeholder="گەڕان بەپێی ناوی کڕیار یان مۆبایل..." class="form-input" style="max-width: 20rem; margin-bottom: 1rem;">
                 <table>
@@ -609,7 +664,7 @@
         </section>
 
         <!-- ================= بەشی چوارەم: قەرزی کۆمپانیاکان ================= -->
-        <section id="tab-companies" class="hidden" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <section id="tab-companies" class="hidden admin-only" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">قەرزی سەرشان بۆ کۆمپانیاکان</h2>
                 <button id="btn-open-comp-modal" class="btn btn-primary">+ کۆمپانیای نوێ</button>
@@ -648,7 +703,7 @@
         </section>
 
         <!-- ================= بەشی پێنجەم: سندوقی ڕۆژانە ================= -->
-        <section id="tab-cashbook" class="hidden" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <section id="tab-cashbook" class="hidden admin-only" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="font-size: 1.5rem; font-weight: bold;">سندوقی ڕۆژانە (Daily Cashbook)</h2>
                 <div style="display: flex; gap: 0.5rem;">
@@ -698,9 +753,47 @@
             </div>
         </section>
 
+        <!-- ================= بەشی شەشەم: بەڕێوەبردنی بەکارهێنەران ================= -->
+        <section id="tab-users" class="hidden admin-only" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 1.5rem; font-weight: bold;">بەڕێوەبردنی بەکارهێنەران</h2>
+                <button id="btn-open-user-modal" class="btn btn-primary">+ بەکارهێنەری نوێ</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ناوی بەکارهێنەر</th>
+                            <th>دەسەڵات / ڕۆڵ</th>
+                            <th>پاسۆرد</th>
+                            <th>کردارەکان</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
     <!-- ================= مۆداڵەکان ================= -->
+
+    <!-- مۆداڵی بەکارهێنەری نوێ -->
+    <div id="user-modal" class="modal hidden no-print">
+        <div class="modal-content">
+            <h3 style="font-weight: bold;">زیادکردنی بەکارهێنەری نوێ</h3>
+            <input type="text" id="new-user-name" placeholder="ناوی بەکارهێنەر" class="form-input">
+            <input type="password" id="new-user-pass" placeholder="پاسۆرد" class="form-input">
+            <select id="new-user-role" class="form-select">
+                <option value="staff">کارمەند (تەنها داخڵکردن و بڕینی وەسڵ)</option>
+                <option value="admin">بەڕێوبەر (سەرجەم دەسەڵاتەکان)</option>
+            </select>
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button id="btn-close-user-modal" class="btn" style="background: var(--gray-200);">پاشەکشە</button>
+                <button id="btn-save-user" class="btn btn-primary">تۆمارکردن</button>
+            </div>
+        </div>
+    </div>
 
     <!-- مۆداڵی کۆگا / مەوادی نوێ و دەستکاریکردن -->
     <div id="product-modal" class="modal hidden no-print">
@@ -714,7 +807,7 @@
             </div>
             <input type="text" id="prod-name" placeholder="ناوی پارچە" class="form-input">
             <input type="number" id="prod-qty" placeholder="عەدەد (کۆگا)" class="form-input">
-            <input type="number" id="prod-buy-price" placeholder="نرخی کڕین" class="form-input">
+            <input type="number" id="prod-buy-price" placeholder="نرخی کڕین" class="form-input admin-only">
             <input type="number" id="prod-sell-price" placeholder="نرخی فرۆشتن" class="form-input">
             
             <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
@@ -895,6 +988,8 @@
             companies: [],
             invoices: [],
             companyTransactions: [],
+            users: [],
+            currentUser: null,
             cashBook: { openingBalance: 0, transactions: [] }
         };
 
@@ -913,13 +1008,33 @@
         window.calculateInvoiceTotals = calculateInvoiceTotals;
         window.handleDatalistSelection = handleDatalistSelection;
         window.viewInvoiceImage = viewInvoiceImage;
-        window.printSingleCustomerInvoice = printSingleCustomerInvoice; // زیادکراو بۆ پرنتی تاکەکەسی
+        window.printSingleCustomerInvoice = printSingleCustomerInvoice;
+        window.deleteUser = deleteUser;
 
         window.addEventListener('DOMContentLoaded', () => {
             setupRealtimeSync();
             addInvoiceRow();
             setupEventListeners();
+            checkDefaultAdmin();
         });
+
+        // لۆجیکی بەکارهێنەران و چوونەژوورەوە
+        async function checkDefaultAdmin() {
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                appState.users = [];
+                snapshot.forEach(doc => appState.users.push({ id: doc.id, ...doc.data() }));
+                
+                // ئەگەر هیچ بەکارهێنەرێک نەبوو، بەکارهێنەری سەرەکی دروست بکە
+                if (appState.users.length === 0) {
+                    setDoc(doc(db, "users", "admin"), {
+                        username: "admin",
+                        password: "123",
+                        role: "admin"
+                    });
+                }
+                renderUsers();
+            });
+        }
 
         function setupRealtimeSync() {
             onSnapshot(collection(db, "products"), (snapshot) => {
@@ -972,12 +1087,16 @@
         }
 
         function setupEventListeners() {
+            document.getElementById('btn-login-submit').addEventListener('click', handleLogin);
+            document.getElementById('btn-logout').addEventListener('click', handleLogout);
+
             document.getElementById('btn-dashboard').addEventListener('click', () => switchTab('dashboard'));
             document.getElementById('btn-inventory').addEventListener('click', () => switchTab('inventory'));
             document.getElementById('btn-invoice').addEventListener('click', () => switchTab('invoice'));
             document.getElementById('btn-customers').addEventListener('click', () => switchTab('customers'));
             document.getElementById('btn-companies').addEventListener('click', () => switchTab('companies'));
             document.getElementById('btn-cashbook').addEventListener('click', () => switchTab('cashbook'));
+            document.getElementById('btn-users').addEventListener('click', () => switchTab('users'));
 
             document.getElementById('btn-inventory-scan').addEventListener('click', () => openScanner('inventory-search'));
             document.getElementById('btn-add-product-modal').addEventListener('click', openAddProductModal);
@@ -1020,11 +1139,99 @@
             document.getElementById('btn-save-manual-cash-out').addEventListener('click', () => saveManualCash('out'));
             document.getElementById('btn-close-viewer').addEventListener('click', () => closeModal('image-viewer-modal'));
 
-            // گوێگرە نوێیەکان بۆ بەشی پرنت و ڕاپۆرتەکان
+            document.getElementById('btn-open-user-modal').addEventListener('click', () => openModal('user-modal'));
+            document.getElementById('btn-close-user-modal').addEventListener('click', () => closeModal('user-modal'));
+            document.getElementById('btn-save-user').addEventListener('click', saveUser);
+
             document.getElementById('btn-print-daily').addEventListener('click', () => generatePeriodReport('ڕۆژانە', 1));
             document.getElementById('btn-print-weekly').addEventListener('click', () => generatePeriodReport('هەفتانە', 7));
             document.getElementById('btn-print-monthly').addEventListener('click', () => generatePeriodReport('مانگانە', 30));
             document.getElementById('btn-print-all-bulk').addEventListener('click', printAllInvoicesBulk);
+        }
+
+        // لۆجیکی Login و دەسەڵاتەکان
+        function handleLogin() {
+            const userVal = document.getElementById('login-username').value.trim();
+            const passVal = document.getElementById('login-password').value.trim();
+            const errorElem = document.getElementById('login-error');
+
+            const foundUser = appState.users.find(u => u.username === userVal && u.password === passVal);
+
+            if (foundUser) {
+                appState.currentUser = foundUser;
+                errorElem.classList.add('hidden');
+                document.getElementById('login-screen').classList.add('hidden');
+                
+                document.getElementById('user-display-name').innerText = foundUser.username;
+                document.getElementById('user-display-role').innerText = foundUser.role === 'admin' ? 'بەڕێوەبەر' : 'کارمەند';
+
+                applyPermissions();
+            } else {
+                errorElem.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            appState.currentUser = null;
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        function applyPermissions() {
+            const isStaff = appState.currentUser && appState.currentUser.role === 'staff';
+            const adminElements = document.querySelectorAll('.admin-only');
+
+            adminElements.forEach(el => {
+                if (isStaff) {
+                    el.classList.add('hidden');
+                } else {
+                    el.classList.remove('hidden');
+                }
+            });
+
+            if (isStaff) {
+                switchTab('invoice');
+            } else {
+                switchTab('dashboard');
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+            tbody.innerHTML = '';
+            appState.users.forEach(u => {
+                tbody.innerHTML += `
+                    <tr style="font-size: 0.875rem;">
+                        <td style="font-weight: bold;">${u.username}</td>
+                        <td><span style="padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; background: ${u.role === 'admin' ? '#ecfdf5' : '#f3f4f6'}; color: ${u.role === 'admin' ? 'var(--emerald-600)' : 'var(--gray-700)'};">${u.role === 'admin' ? 'بەڕێوەبەر' : 'کارمەند'}</span></td>
+                        <td>${u.password}</td>
+                        <td>
+                            ${u.username !== 'admin' ? `<button onclick="deleteUser('${u.id}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">سڕینەوە</button>` : '<span style="color:var(--gray-500); font-size: 0.75rem;">سەرەکی</span>'}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function saveUser() {
+            const username = document.getElementById('new-user-name').value.trim();
+            const password = document.getElementById('new-user-pass').value.trim();
+            const role = document.getElementById('new-user-role').value;
+
+            if (!username || !password) return alert("تکایە هەموو فیلدەکان پڕبکەرەوە!");
+
+            const userId = 'USER_' + Date.now();
+            await setDoc(doc(db, "users", userId), { username, password, role });
+            closeModal('user-modal');
+            document.getElementById('new-user-name').value = '';
+            document.getElementById('new-user-pass').value = '';
+        }
+
+        async function deleteUser(id) {
+            if (confirm("دڵنیای لە سڕینەوەی ئەم بەکارهێنەرە؟")) {
+                await deleteDoc(doc(db, "users", id));
+            }
         }
 
         function updateProductsDatalist() {
@@ -1069,15 +1276,17 @@
                 return;
             }
 
+            const isStaff = appState.currentUser && appState.currentUser.role === 'staff';
+
             filtered.forEach(p => {
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
                         <td style="font-weight: bold; color: var(--slate-700);">${p.partNo || "بێ پارت نەمبەر"}</td>
                         <td>${p.name}</td>
                         <td style="font-weight: bold; color: ${p.qty <= 5 ? 'var(--red-600)' : 'inherit'}">${p.qty} دانە</td>
-                        <td>${Number(p.buyPrice).toLocaleString()} د.ع</td>
+                        <td class="${isStaff ? 'hidden' : ''}">${Number(p.buyPrice).toLocaleString()} د.ع</td>
                         <td style="color: var(--emerald-600); font-weight: bold;">${Number(p.sellPrice).toLocaleString()} د.ع</td>
-                        <td>
+                        <td class="${isStaff ? 'hidden' : ''}">
                             <div style="display: flex; gap: 0.25rem;">
                                 <button onclick="openEditProductModal('${p.id}')" class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">دەستکاری</button>
                                 <button onclick="deleteProduct('${p.id}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">سڕینەوە</button>
@@ -1304,7 +1513,6 @@
             const invoiceId = 'INV-' + (appState.invoices.length + 1001);
             const dateStr = new Date().toLocaleDateString('ku-IQ');
             
-            // زیادکردنی کاتی ڕێکەوتی تەواو و ملی چرکە بۆ پڕۆسەی فلتەری ڕاپۆرتەکان
             await setDoc(doc(db, "invoices", invoiceId), { 
                 invoiceId, customerName, customerId, date: dateStr, items, subtotal, discount, finalAmount, paid, debt, timestamp: Date.now() 
             });
@@ -1421,7 +1629,6 @@
 
         /* ================= لۆجیکی نوێ: سیستەمی پرنتکردن و مۆبایل ڕاپۆرت ================= */
         
-        // ١. دروستکردنی پسوڵەی دەستکاری کراو و جوانی تاکەکەسی بۆ هەر کڕیارێک
         function buildSingleInvoiceHTML(customer) {
             const custInvoices = appState.invoices.filter(inv => inv.customerId === customer.id || inv.customerName === customer.name);
             let rowsHTML = "";
@@ -1479,7 +1686,6 @@
             `;
         }
 
-        // ۲. چاپکردنی پسوڵەی یەک کڕیار
         function printSingleCustomerInvoice(id) {
             const customer = appState.customers.find(c => c.id === id);
             if (!customer) return alert("کڕیارەکە نەدۆزرایەوە!");
@@ -1490,7 +1696,6 @@
             printArea.innerHTML = "";
         }
 
-        // ۳. دوگمەی گشتی: پرنتکردنی تەواوی پسوڵەکان پێکەوە
         function printAllInvoicesBulk() {
             const printArea = document.getElementById('custom-print-area');
             printArea.innerHTML = "";
@@ -1505,14 +1710,11 @@
             printArea.innerHTML = "";
         }
 
-        // ٤. دروستکردنی ڕاپۆرتی ڕۆژانە، هەفتانە، و مانگانە بۆ فایەربەیس
         function generatePeriodReport(title, days) {
             const printArea = document.getElementById('custom-print-area');
             printArea.innerHTML = "";
             
             const timeLimit = Date.now() - (days * 24 * 60 * 60 * 1000);
-            
-            // فلتەرکردنی وەسڵەکان بەپێی کات
             const filteredInvoices = appState.invoices.filter(inv => (inv.timestamp || 0) >= timeLimit);
             
             let totalSales = 0;
@@ -1585,7 +1787,7 @@
             printArea.innerHTML = "";
         }
 
-        /* ================= بەشی کۆمپانیاکان (له‌گه‌ڵ لۆجیكی کۆمپرێسی نوێ) ================= */
+        /* ================= بەشی کۆمپانیاکان ================= */
         function renderCompanies() {
             const tbody = document.getElementById('companies-tbody');
             tbody.innerHTML = '';
@@ -1658,7 +1860,6 @@
             openModal('company-trans-modal');
         }
 
-        // فەنکشنی هەرە گرنگ: قەبارەی وێنە کەم دەکاتەوە پێش پاشەکەوتکردن بۆ ئەوەی نەسڕێتەوە
         function compressImage(file, maxWidth = 800, quality = 0.7) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -1681,7 +1882,6 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // ناردنی کۆدی وێنە بە قەبارەیەکی یەکجار بچووک
                         resolve(canvas.toDataURL('image/jpeg', quality));
                     };
                 };
@@ -1701,7 +1901,6 @@
             let base64Image = "";
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
-                // لێرەدا وێنەکە زۆر بچووک دەکرێتەوە بۆ ژێر 100KB بۆ پاراستنی داتا لە فایەربەیس
                 base64Image = await compressImage(file, 800, 0.6); 
             }
 
@@ -1723,7 +1922,7 @@
                 document.getElementById('comp-trans-amount').value = '';
                 fileInput.value = '';
             } catch (error) {
-                alert("کێشەیەک لە پاشەکەوتکردن هەبوو، پێدەچێت قەبارەی وێنەکە زۆر گەورە بێت: " + error.message);
+                alert("کێشەیەک لە پاشەکەوتکردن هەبوو: " + error.message);
             }
         }
 
@@ -1753,7 +1952,7 @@
 
             const opening = appState.cashBook.openingBalance;
             const finalCash = opening + totalIn - totalOut;
-            document.getElementById('cb-opening').innerText = opening.toLocaleString() + " د.ع";
+            document.getElementById('cb-opening').innerText = opening.toLocaleString() + " د.c";
             document.getElementById('cb-in').innerText = totalIn.toLocaleString() + " د.ع";
             document.getElementById('cb-out').innerText = totalOut.toLocaleString() + " د.ع";
             document.getElementById('cb-final').innerText = finalCash.toLocaleString() + " د.ع";
