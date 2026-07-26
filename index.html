@@ -695,6 +695,7 @@
                             <th>بڕی پارە</th>
                             <th>وێنەی وەسڵ</th>
                             <th>کات</th>
+                            <th>کردار</th>
                         </tr>
                     </thead>
                     <tbody id="company-history-tbody"></tbody>
@@ -1008,6 +1009,7 @@
         window.calculateInvoiceTotals = calculateInvoiceTotals;
         window.handleDatalistSelection = handleDatalistSelection;
         window.viewInvoiceImage = viewInvoiceImage;
+        window.deleteCompanyTransaction = deleteCompanyTransaction;
         window.printSingleCustomerInvoice = printSingleCustomerInvoice;
         window.deleteUser = deleteUser;
 
@@ -1812,24 +1814,53 @@
             const sorted = [...appState.companyTransactions].sort((a,b) => b.timestamp - a.timestamp);
             
             if(sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--gray-500); padding: 1rem;">هیچ مامەڵەیەک تۆمار نەکراوە.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1rem;">هیچ مامەڵەیەک تۆمار نەکراوە.</td></tr>`;
                 return;
             }
 
             sorted.forEach(t => {
                 const comp = appState.companies.find(c => c.id === t.companyId);
                 const compName = comp ? comp.name : "کۆمپانیای نەناسراو";
-                const imgBtn = t.image ? `<button onclick="viewInvoiceImage('${t.id}')" class="btn" style="padding:0.2rem 0.5rem; font-size:0.75rem; background:#2563eb; color:white;">👁️ بینینی وێنە</button>` : `<span style="color:var(--gray-500);">وێنە نییە</span>`;
+                const imgThumb = t.image 
+                    ? `<img src="${t.image}" onclick="viewInvoiceImage('${t.id}')" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--gray-300);" title="داگرتن / گەورەکردنی وێنە" />` 
+                    : `<span style="color:var(--gray-500); font-size: 0.75rem;">وێنە نییە</span>`;
+
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
                         <td>${compName}</td>
                         <td>${t.type === 'pay' ? 'دانەوەی قەرز (-)' : 'هێنانی مەواد بەقەرز (+)'}</td>
                         <td style="font-weight:bold;">${Number(t.amount).toLocaleString()} د.ع</td>
-                        <td>${imgBtn}</td>
+                        <td>${imgThumb}</td>
                         <td style="font-size:0.75rem; color:var(--gray-500);">${new Date(t.timestamp).toLocaleDateString('ku-IQ')}</td>
+                        <td>
+                            <button onclick="deleteCompanyTransaction('${t.id}')" class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">سڕینەوە</button>
+                        </td>
                     </tr>
                 `;
             });
+        }
+
+        async function deleteCompanyTransaction(transId) {
+            const trans = appState.companyTransactions.find(t => t.id === transId);
+            if (!trans) return;
+
+            if (confirm("دڵنیای لە سڕینەوەی ئەم مامەڵەیە؟ بە سڕینەوەی، بڕی پارەکە لە حسابی کۆمپانیا و سندوقدا ڕاست دەکرێتەوە.")) {
+                const comp = appState.companies.find(c => c.id === trans.companyId);
+                
+                // ڕاستکردنەوەی قەرزی کۆمپانیا
+                if (comp) {
+                    if (trans.type === 'pay') {
+                        // ئەگەر جۆری مامەڵەکە دانەوەی پارە بووبێت، سڕینەوەی واتە قەرزەکە دەکەوێتەوە سەرشانت
+                        await updateDoc(doc(db, "companies", comp.id), { totalOwed: (comp.totalOwed || 0) + Number(trans.amount) });
+                    } else if (trans.type === 'get_goods') {
+                        // ئەگەر جۆری مامەڵەکە هێنانی مەواد بووبێت، سڕینەوەی واتە قەرزەکەت کەم دەکاتەوە
+                        await updateDoc(doc(db, "companies", comp.id), { totalOwed: Math.max(0, (comp.totalOwed || 0) - Number(trans.amount)) });
+                    }
+                }
+
+                // سڕینەوەی دۆکیومێنتەکە لە fairesbase
+                await deleteDoc(doc(db, "comp_transactions", transId));
+            }
         }
 
         function viewInvoiceImage(transId) {
