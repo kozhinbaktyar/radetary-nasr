@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستەمی بەڕێوەبردنی دوکانی ڕاێتەرى ناصر</title>
+    <title>سیستەمی بەڕێوەبردنی دوکانی ڕاێتەری ناصر</title>
     
     <!-- هێنانی کتێبخانەی خوێندنەوەی بارکۆد بە کامێرا -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -970,15 +970,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      const firebaseConfig = {
-  apiKey: "AIzaSyAMI84_IuKUZVqc8ImMW7eahru20cTkjFM",
-  authDomain: "sysam-k.firebaseapp.com",
-  projectId: "sysam-k",
-  storageBucket: "sysam-k.firebasestorage.app",
-  messagingSenderId: "905972435434",
-  appId: "1:905972435434:web:2501e11240523f8368ca93",
-  measurementId: "G-43PT1ZPMX2"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMI84_IuKUZVqc8ImMW7eahru20cTkjFM",
+            authDomain: "sysam-k.firebaseapp.com",
+            projectId: "sysam-k",
+            storageBucket: "sysam-k.firebasestorage.app",
+            messagingSenderId: "905972435434",
+            appId: "1:905972435434:web:2501e11240523f8368ca93",
+            measurementId: "G-43PT1ZPMX2"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -1035,7 +1035,30 @@
                     });
                 }
                 renderUsers();
+
+                // پشکنین بۆ درێژەدان بە دانیشتنی چوونەژوورەوەی پێشوو (Persistent Login)
+                checkSavedSession();
             });
+        }
+
+        function checkSavedSession() {
+            const savedUser = localStorage.getItem('app_current_user');
+            if (savedUser) {
+                try {
+                    const parsedUser = JSON.parse(savedUser);
+                    // پشکنین لەگەڵ لیستی ئۆنلاین بۆ دڵنیابوون لەوەی بەکارهێنەرەکە هەیە
+                    const validUser = appState.users.find(u => u.username === parsedUser.username && u.password === parsedUser.password);
+                    if (validUser) {
+                        appState.currentUser = validUser;
+                        document.getElementById('login-screen').classList.add('hidden');
+                        document.getElementById('user-display-name').innerText = validUser.username;
+                        document.getElementById('user-display-role').innerText = validUser.role === 'admin' ? 'بەڕێوەبەر' : 'کارمەند';
+                        applyPermissions();
+                    }
+                } catch (e) {
+                    console.error("Session restore failed", e);
+                }
+            }
         }
 
         function setupRealtimeSync() {
@@ -1161,6 +1184,7 @@
 
             if (foundUser) {
                 appState.currentUser = foundUser;
+                localStorage.setItem('app_current_user', JSON.stringify(foundUser)); // پاشەکەوتکردنی بەکارهێنەر لەگەڵ ڕیفڕێش دا
                 errorElem.classList.add('hidden');
                 document.getElementById('login-screen').classList.add('hidden');
                 
@@ -1175,6 +1199,7 @@
 
         function handleLogout() {
             appState.currentUser = null;
+            localStorage.removeItem('app_current_user'); // سڕینەوە لە ڕیفڕێش کاتێک دەرچوون دەکرێت
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('login-screen').classList.remove('hidden');
