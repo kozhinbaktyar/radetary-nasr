@@ -383,8 +383,21 @@
             body * {
                 visibility: hidden;
             }
+            #receipt-print-area, #receipt-print-area *,
             #custom-print-area, #custom-print-area * {
                 visibility: visible;
+            }
+            #receipt-print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                color: black;
+                background: white;
+                padding: 10px;
+                direction: rtl;
+                font-family: 'Vazirmatn', sans-serif;
             }
             #custom-print-area {
                 display: block !important;
@@ -928,36 +941,35 @@
     <!-- ================= وەسڵی چاپکردن (Thermal Area) ================= -->
     <div id="receipt-print-area" class="hidden">
         <div style="text-align: center;">
-            <h2 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 0.25rem;">وەسڵەکەی دوکان</h2>
-            <p>ناونیشان: سلیمانی - بازاڕ</p>
-            <p>مۆبایل: 0770xxxxxxx</p>
-            <p>---------------------------------</p>
+            <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.1rem;">ڕادێته‌ری ناسڕ</h2>
+            <p style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem;">بەسرپەرشتی وەستا ڕێباز</p>
+            <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
         </div>
-        <div style="margin: 0.5rem 0;">
-            <p>ڕێکەوت: <span id="print-date"></span></p>
-            <p>کڕیار: <span id="print-customer"></span></p>
-            <p>ژمارەی وەسڵ: <span id="print-inv-id"></span></p>
+        <div style="margin: 0.5rem 0; font-size: 0.85rem;">
+            <p><strong>ژمارەی وەسڵ:</strong> <span id="print-inv-id"></span></p>
+            <p><strong>ناوی کڕیار:</strong> <span id="print-customer"></span></p>
+            <p><strong>بەروار و کات:</strong> <span id="print-date"></span></p>
         </div>
-        <p>---------------------------------</p>
-        <table style="font-size: 11px;">
+        <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
+        <table style="font-size: 11px; width: 100%;">
             <thead>
                 <tr>
-                    <th>کاڵا</th>
+                    <th style="text-align: right;">ئایتمەکان</th>
                     <th style="text-align: center;">عدد</th>
                     <th style="text-align: left;">نرخ</th>
                 </tr>
             </thead>
             <tbody id="print-items-tbody"></tbody>
         </table>
-        <p>---------------------------------</p>
-        <div style="text-align: left; margin-top: 0.5rem;">
+        <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
+        <div style="text-align: left; margin-top: 0.5rem; font-size: 0.85rem;">
             <p>کۆی گشتی: <span id="print-subtotal"></span></p>
             <p>داشکاندن: <span id="print-discount"></span></p>
-            <p style="font-weight: bold;">کۆتایی: <span id="print-final"></span></p>
-            <p>کاش دراوە: <span id="print-paid"></span></p>
-            <p style="font-weight: bold; color: var(--red-600);">بڕی قەرز: <span id="print-debt"></span></p>
+            <p style="font-weight: bold;">بڕی پارە (کۆتایی): <span id="print-final"></span></p>
+            <p>پارەی دراو (کاش): <span id="print-paid"></span></p>
+            <p style="font-weight: bold; color: var(--red-600);">بڕی ماوە (قەرز): <span id="print-debt"></span></p>
         </div>
-        <div style="text-align: center; margin-top: 1rem; font-weight: bold;">
+        <div style="text-align: center; margin-top: 1rem; font-weight: bold; font-size: 0.85rem;">
             <p>سوپاس بۆ سەردانتان!</p>
         </div>
     </div>
@@ -1538,7 +1550,8 @@
             }
 
             const invoiceId = 'INV-' + (appState.invoices.length + 1001);
-            const dateStr = new Date().toLocaleDateString('ku-IQ');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ku-IQ') + ' - ' + now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
             
             await setDoc(doc(db, "invoices", invoiceId), { 
                 invoiceId, customerName, customerId, date: dateStr, items, subtotal, discount, finalAmount, paid, debt, timestamp: Date.now() 
@@ -1557,7 +1570,7 @@
             const printTbody = document.getElementById('print-items-tbody');
             printTbody.innerHTML = '';
             items.forEach(it => {
-                printTbody.innerHTML += `<tr><td>${it.name}</td><td style="text-align: center;">${it.qty}</td><td style="text-align: left;">${it.price.toLocaleString()}</td></tr>`;
+                printTbody.innerHTML += `<tr><td style="text-align: right;">${it.name}</td><td style="text-align: center;">${it.qty}</td><td style="text-align: left;">${it.price.toLocaleString()}</td></tr>`;
             });
             document.getElementById('print-subtotal').innerText = subtotal.toLocaleString() + " د.ع";
             document.getElementById('print-discount').innerText = discount.toLocaleString() + " د.ع";
@@ -2008,7 +2021,7 @@
 
             const opening = appState.cashBook.openingBalance;
             const finalCash = opening + totalIn - totalOut;
-            document.getElementById('cb-opening').innerText = opening.toLocaleString() + " د.c";
+            document.getElementById('cb-opening').innerText = opening.toLocaleString() + " د.ع";
             document.getElementById('cb-in').innerText = totalIn.toLocaleString() + " د.ع";
             document.getElementById('cb-out').innerText = totalOut.toLocaleString() + " د.ع";
             document.getElementById('cb-final').innerText = finalCash.toLocaleString() + " د.ع";
