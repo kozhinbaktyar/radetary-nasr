@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سیستەمی بەڕێوەبردنی دوکانی ڕاێتەری ناصر</title>
+    <title>سیستەمی بەڕێوەبردنی دوکانی ڕادێتەری ناسڕ</title>
     
     <!-- هێنانی کتێبخانەی خوێندنەوەی بارکۆد بە کامێرا -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -387,7 +387,7 @@
             #custom-print-area, #custom-print-area * {
                 visibility: visible;
             }
-            #receipt-print-area {
+            #receipt-print-area, #custom-print-area {
                 display: block !important;
                 position: absolute;
                 left: 0;
@@ -396,18 +396,6 @@
                 color: black;
                 background: white;
                 padding: 10px;
-                direction: rtl;
-                font-family: 'Vazirmatn', sans-serif;
-            }
-            #custom-print-area {
-                display: block !important;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                color: black;
-                background: white;
-                padding: 20px;
                 direction: rtl;
                 font-family: 'Vazirmatn', sans-serif;
             }
@@ -431,7 +419,7 @@
             }
             th, td {
                 border: 1px solid black !important;
-                padding: 8px !important;
+                padding: 6px !important;
                 text-align: right !important;
             }
         }
@@ -443,7 +431,7 @@
     <div id="login-screen" class="no-print">
         <div class="login-card">
             <div style="text-align: center;">
-                <h1 style="font-size: 1.5rem; font-weight: bold; color: var(--emerald-600);">🛒 ڕاێتەری ناصر</h1>
+                <h1 style="font-size: 1.5rem; font-weight: bold; color: var(--emerald-600);">🛒 ڕادێتەری ناسڕ</h1>
                 <p style="font-size: 0.875rem; color: var(--slate-500); margin-top: 0.25rem;">چوونەژوورەوە بۆ سیستەم</p>
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -464,7 +452,7 @@
     <!-- ١. مینیوی تەنیشت (Sidebar) -->
     <aside class="no-print">
         <div class="sidebar-header">
-            <h1 style="font-size: 1.25rem; font-weight: bold; color: var(--emerald-500);">🛒 ڕاێتەری ناصر</h1>
+            <h1 style="font-size: 1.25rem; font-weight: bold; color: var(--emerald-500);">🛒 ڕادێتەری ناسڕ</h1>
             <p style="font-size: 0.75rem; color: var(--slate-500); margin-top: 0.25rem;">بەڕێوەبردنی دارایی و کۆگا </p>
             <div style="margin-top: 0.75rem; padding: 0.5rem; background: var(--slate-800); border-radius: 0.375rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -557,7 +545,7 @@
                 </div>
             </div>
 
-            <!-- گەڕان بە پارت نەمبەر یان ناو -->
+            <!-- گەڕان بە پارت نەمبەر یانناو -->
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; background: white; padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200);">
                 <input type="text" id="inventory-search" placeholder="گەڕان بەپێی پارت نەمبەر یان ناوی پارچە..." class="form-input" style="flex: 1; min-width: 250px;">
                 <button id="btn-clear-inventory-search" class="btn" style="background: var(--gray-200);">پاککردنەوە</button>
@@ -585,7 +573,6 @@
         <section id="tab-invoice" class="hidden" style="display: flex; flex-direction: column; gap: 1.5rem;">
             <h2 style="font-size: 1.5rem; font-weight: bold;">بڕینی وەسڵی نوێ</h2>
             
-            <!-- لیستی داگرتووی داینامیکی بۆ گەڕانی خێرا لە ناو وەسڵ (Datalist) -->
             <datalist id="products-datalist"></datalist>
 
             <div class="pos-grid">
@@ -596,7 +583,6 @@
                         <button id="btn-pos-quick-scan" class="btn btn-warning" style="padding: 0.35rem 0.75rem; font-size: 0.875rem;">📷 خستنە ناو وەسڵ بە کامێرا</button>
                     </div>
                     
-                    <!-- فیلدێکی شاراوە بۆ وەرگرتنی سکانی خێرا -->
                     <input type="hidden" id="pos-quick-scan">
 
                     <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.75rem; font-weight: bold; font-size: 0.875rem;">
@@ -697,7 +683,6 @@
                 </table>
             </div>
 
-            <!-- خشتەی پاشکۆ: مێژووی جووڵەکان لەگەڵ کۆمپانیاکان و وێنەی وەسڵەکان -->
             <div class="table-container" style="margin-top: 1.5rem;">
                 <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 1rem;">📋 دوایین مامەڵەکانی کۆمپانیاکان (بە وێنەی وەسڵەوە)</h3>
                 <table>
@@ -938,38 +923,40 @@
         </div>
     </div>
 
-    <!-- ================= وەسڵی چاپکردن (Thermal Area) ================= -->
+    <!-- ================= وەسڵی چاپکردن (Thermal Area) - نوێکراوە ================= -->
     <div id="receipt-print-area" class="hidden">
-        <div style="text-align: center;">
-            <p style="font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem;">ڕادێته‌ری ناسڕ</p>
-            <p style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.5rem;">بەسرپەرشتی وەستا ڕێباز</p>
-            <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
+        <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
+            <h2 style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.1rem;">ڕادێتەری ناسڕ</h2>
+            <p style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.25rem;">(بە سەرپەرشتی وەستا ڕێباز)</p>
+            <p style="font-size: 0.8rem;">سلێمانی - پیشەسازی باکوور</p>
         </div>
-        <div style="margin: 0.5rem 0; font-size: 0.85rem;">
+        
+        <div style="margin: 0.5rem 0; font-size: 0.85rem; display: flex; flex-direction: column; gap: 3px;">
             <p><strong>ژمارەی وەسڵ:</strong> <span id="print-inv-id"></span></p>
             <p><strong>ناوی کڕیار:</strong> <span id="print-customer"></span></p>
             <p><strong>بەروار و کات:</strong> <span id="print-date"></span></p>
         </div>
-        <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
-        <table style="font-size: 11px; width: 100%;">
+        
+        <table style="font-size: 11px; width: 100%; border-collapse: collapse; margin-top: 8px;">
             <thead>
-                <tr>
+                <tr style="border-bottom: 1px solid #000;">
                     <th style="text-align: right;">ئایتمەکان</th>
-                    <th style="text-align: center;">عدد</th>
-                    <th style="text-align: left;">نرخ</th>
+                    <th style="text-align: center;">عەدەد</th>
+                    <th style="text-align: left;">نرخ (د.ع)</th>
                 </tr>
             </thead>
             <tbody id="print-items-tbody"></tbody>
         </table>
-        <p style="border-top: 1px dashed #000; margin: 0.25rem 0;"></p>
-        <div style="text-align: left; margin-top: 0.5rem; font-size: 0.85rem;">
+        
+        <div style="text-align: left; margin-top: 0.75rem; border-top: 1px dashed #000; padding-top: 6px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 3px;">
             <p>کۆی گشتی: <span id="print-subtotal"></span></p>
             <p>داشکاندن: <span id="print-discount"></span></p>
-            <p style="font-weight: bold;">بڕی پارە (کۆتایی): <span id="print-final"></span></p>
-            <p>پارەی دراو (کاش): <span id="print-paid"></span></p>
-            <p style="font-weight: bold; color: var(--red-600);">بڕی ماوە (قەرز): <span id="print-debt"></span></p>
+            <p style="font-weight: bold; font-size: 0.95rem;">کۆی بڕی پارە: <span id="print-final"></span></p>
+            <p>دراو (کاش): <span id="print-paid"></span></p>
+            <p style="font-weight: bold; color: var(--red-600);">بڕی قەرز: <span id="print-debt"></span></p>
         </div>
-        <div style="text-align: center; margin-top: 1rem; font-weight: bold; font-size: 0.85rem;">
+        
+        <div style="text-align: center; margin-top: 1rem; font-weight: bold; font-size: 0.8rem; border-top: 1px solid #000; padding-top: 5px;">
             <p>سوپاس بۆ سەردانتان!</p>
         </div>
     </div>
@@ -1038,7 +1025,6 @@
                 appState.users = [];
                 snapshot.forEach(doc => appState.users.push({ id: doc.id, ...doc.data() }));
                 
-                // ئەگەر هیچ بەکارهێنەرێک نەبوو، بەکارهێنەری سەرەکی دروست بکە
                 if (appState.users.length === 0) {
                     setDoc(doc(db, "users", "admin"), {
                         username: "admin",
@@ -1047,8 +1033,6 @@
                     });
                 }
                 renderUsers();
-
-                // پشکنین بۆ درێژەدان بە دانیشتنی چوونەژوورەوەی پێشوو (Persistent Login)
                 checkSavedSession();
             });
         }
@@ -1058,7 +1042,6 @@
             if (savedUser) {
                 try {
                     const parsedUser = JSON.parse(savedUser);
-                    // پشکنین لەگەڵ لیستی ئۆنلاین بۆ دڵنیابوون لەوەی بەکارهێنەرەکە هەیە
                     const validUser = appState.users.find(u => u.username === parsedUser.username && u.password === parsedUser.password);
                     if (validUser) {
                         appState.currentUser = validUser;
@@ -1196,7 +1179,7 @@
 
             if (foundUser) {
                 appState.currentUser = foundUser;
-                localStorage.setItem('app_current_user', JSON.stringify(foundUser)); // پاشەکەوتکردنی بەکارهێنەر لەگەڵ ڕیفڕێش دا
+                localStorage.setItem('app_current_user', JSON.stringify(foundUser));
                 errorElem.classList.add('hidden');
                 document.getElementById('login-screen').classList.add('hidden');
                 
@@ -1211,7 +1194,7 @@
 
         function handleLogout() {
             appState.currentUser = null;
-            localStorage.removeItem('app_current_user'); // سڕینەوە لە ڕیفڕێش کاتێک دەرچوون دەکرێت
+            localStorage.removeItem('app_current_user');
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('login-screen').classList.remove('hidden');
@@ -1551,12 +1534,14 @@
 
             const invoiceId = 'INV-' + (appState.invoices.length + 1001);
             const now = new Date();
-            const dateStr = now.toLocaleDateString('ku-IQ') + ' - ' + now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('ku-IQ') + " " + now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
             
+            // 💡 1. تۆمارکردنی ڕاستەوخۆ لەرێگەی Firebase
             await setDoc(doc(db, "invoices", invoiceId), { 
                 invoiceId, customerName, customerId, date: dateStr, items, subtotal, discount, finalAmount, paid, debt, timestamp: Date.now() 
             });
 
+            // 💡 2. کەمکردنەوەی ئۆتۆماتیکی لە ڕەسیدی کۆگا لەرێگەی Firebase
             for (const it of items) {
                 const dbProduct = appState.products.find(p => it.name.includes(p.name) || p.name.includes(it.name));
                 if (dbProduct) {
@@ -1564,6 +1549,7 @@
                 }
             }
 
+            // 💡 3. ئامادەکردنی بەشی وەسڵ بۆ پرنت (Thermal Printable Area)
             document.getElementById('print-date').innerText = dateStr;
             document.getElementById('print-customer').innerText = customerName;
             document.getElementById('print-inv-id').innerText = invoiceId;
@@ -1582,6 +1568,7 @@
             window.print();
             document.getElementById('receipt-print-area').classList.add('hidden');
 
+            // پاککردنەوەی فۆرمەکە بۆ وەسڵی داهاتوو
             document.getElementById('invoice-items-container').innerHTML = '';
             document.getElementById('invoice-discount').value = '0';
             document.getElementById('invoice-paid').value = '0';
@@ -1604,7 +1591,7 @@
                         <td style="font-weight: bold;">${(inv.finalAmount || 0).toLocaleString()}</td>
                         <td style="color: var(--emerald-600);">${(inv.paid || 0).toLocaleString()}</td>
                         <td style="color: var(--red-600);">${(inv.debt || 0).toLocaleString()}</td>
-                        <td style="color: var(--gray-500);">${inv.date}</td>
+                        <td style="color: var(--gray-500); font-size: 0.75rem;">${inv.date}</td>
                     </tr>
                 `;
             });
@@ -1667,7 +1654,7 @@
             }
         }
 
-        /* ================= لۆجیکی نوێ: سیستەمی پرنتکردن و مۆبایل ڕاپۆرت ================= */
+        /* ================= سیستەمی پرنتکردنی ڕاپۆرت و کڕیار ================= */
         
         function buildSingleInvoiceHTML(customer) {
             const custInvoices = appState.invoices.filter(inv => inv.customerId === customer.id || inv.customerName === customer.name);
@@ -1694,10 +1681,10 @@
             return `
                 <div class="print-invoice-block" style="direction:rtl; font-family:'Vazirmatn', sans-serif; padding:10px;">
                     <div style="text-align:center; margin-bottom: 20px;">
-                        <h2 style="font-size:1.5rem; font-weight:bold;">کۆمسیۆن و بەڵگەنامەی حساباتی کڕیار</h2>
-                        <p style="margin-top:5px; color:var(--slate-500);">تۆماری فەرمی گۆڕانکاری دارایی</p>
+                        <h2 style="font-size:1.5rem; font-weight:bold;">ڕادێتەری ناسڕ</h2>
+                        <p style="margin-top:2px; font-weight:bold;">(بە سەرپەرشتی وەستا ڕێباز)</p>
                     </div>
-                    <div style="display:grid; grid-template-cols: 1fr 1fr; gap:10px; margin-bottom:20px; font-size:1rem; border:1px solid #ccc; padding:10px; border-radius:8px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px; font-size:1rem; border:1px solid #ccc; padding:10px; border-radius:8px;">
                         <div><strong>ناوی کڕیار:</strong> ${customer.name}</div>
                         <div><strong>ژمارەی مۆبایل:</strong> ${customer.phone || 'بێ ژمارە'}</div>
                         <div><strong>ناونیشان:</strong> ${customer.address || 'دیاری نەکراوە'}</div>
@@ -1720,7 +1707,7 @@
                         </tbody>
                     </table>
                     <div style="text-align:left; font-size:1.1rem; font-weight:bold; margin-top:15px; border-top:1px solid #000; padding-top:10px;">
-                        بڕی قەرزی کۆتایی بۆ واژۆ: ${Number(customer.totalDebt || 0).toLocaleString()} د.ع
+                        بڕی قەرزی کۆتایی: ${Number(customer.totalDebt || 0).toLocaleString()} د.ع
                     </div>
                 </div>
             `;
@@ -1786,7 +1773,8 @@
                 <div style="direction:rtl; font-family:'Vazirmatn', sans-serif;">
                     <div style="text-align:center; margin-bottom:25px;">
                         <h2 style="font-size:1.6rem; font-weight:bold;">📊 ڕاپۆرتی ${title}ی فرۆشتن و قەرزەکان</h2>
-                        <p style="margin-top:5px;">ڕێکەوتی چاپکردنی ڕاپۆرت: ${new Date().toLocaleDateString('ku-IQ')}</p>
+                        <p style="margin-top:2px; font-weight:bold;">ڕادێتەری ناسڕ (بە سەرپەرشتی وەستا ڕێباز)</p>
+                        <p style="margin-top:5px; font-size:0.85rem; color:#555;">ڕێکەوتی چاپکردنی ڕاپۆرت: ${new Date().toLocaleDateString('ku-IQ')}</p>
                     </div>
                     
                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:25px; border:1px solid #ccc; padding:15px; border-radius:8px; background:#f9fafb;">
@@ -1860,7 +1848,7 @@
                 const comp = appState.companies.find(c => c.id === t.companyId);
                 const compName = comp ? comp.name : "کۆمپانیای نەناسراو";
                 const imgThumb = t.image 
-                    ? `<img src="${t.image}" onclick="viewInvoiceImage('${t.id}')" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--gray-300);" title="داگرتن / گەورەکردنی وێنە" />` 
+                    ? `<img src="${t.image}" onclick="viewInvoiceImage('${t.id}')" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid var(--gray-300);" title="گەورەکردنی وێنە" />` 
                     : `<span style="color:var(--gray-500); font-size: 0.75rem;">وێنە نییە</span>`;
 
                 tbody.innerHTML += `
@@ -1882,21 +1870,17 @@
             const trans = appState.companyTransactions.find(t => t.id === transId);
             if (!trans) return;
 
-            if (confirm("دڵنیای لە سڕینەوەی ئەم مامەڵەیە؟ بە سڕینەوەی، بڕی پارەکە لە حسابی کۆمپانیا و سندوقدا ڕاست دەکرێتەوە.")) {
+            if (confirm("دڵنیای لە سڕینەوەی ئەم مامەڵەیە؟")) {
                 const comp = appState.companies.find(c => c.id === trans.companyId);
                 
-                // ڕاستکردنەوەی قەرزی کۆمپانیا
                 if (comp) {
                     if (trans.type === 'pay') {
-                        // ئەگەر جۆری مامەڵەکە دانەوەی پارە بووبێت، سڕینەوەی واتە قەرزەکە دەکەوێتەوە سەرشانت
                         await updateDoc(doc(db, "companies", comp.id), { totalOwed: (comp.totalOwed || 0) + Number(trans.amount) });
                     } else if (trans.type === 'get_goods') {
-                        // ئەگەر جۆری مامەڵەکە هێنانی مەواد بووبێت، سڕینەوەی واتە قەرزەکەت کەم دەکاتەوە
                         await updateDoc(doc(db, "companies", comp.id), { totalOwed: Math.max(0, (comp.totalOwed || 0) - Number(trans.amount)) });
                     }
                 }
 
-                // سڕینەوەی دۆکیومێنتەکە لە fairesbase
                 await deleteDoc(doc(db, "comp_transactions", transId));
             }
         }
