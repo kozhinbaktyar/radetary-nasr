@@ -161,7 +161,7 @@
 
         @media (min-width: 1024px) {
             .grid-cards {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(4, 1fr);
             }
         }
 
@@ -506,19 +506,65 @@
                     </div>
                     <span class="card-icon" style="background-color: #ecfdf5;">💵</span>
                 </div>
+                <!-- ✨ بەشی قازانجی صافی ئەمڕۆ (زیادکراو) -->
+                <div class="stat-card" style="border-left: 4px solid var(--emerald-600);">
+                    <div>
+                        <p style="font-size: 0.875rem; color: var(--slate-500);">قازانجی صافی ئەمڕۆ</p>
+                        <h3 id="card-today-profit" style="font-size: 1.5rem; font-weight: bold; color: var(--emerald-600); margin-top: 0.5rem;">0 د.ع</h3>
+                    </div>
+                    <span class="card-icon" style="background-color: #ecfdf5;">📈</span>
+                </div>
             </div>
 
-            <!-- بەشی زیادکراو: دوگمەی ڕاپۆرتەکان لە لاپەڕەی سەرەکی -->
-            <div class="admin-only" style="display: flex; gap: 0.5rem; flex-wrap: wrap; background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <h3 style="width: 100%; font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem;">📊 ڕاپۆرتەکان و چاپکردنی گشتی</h3>
-                <button id="btn-print-daily" class="btn btn-warning">📊 ڕاپۆرتی ڕۆژانە</button>
-                <button id="btn-print-weekly" class="btn btn-warning">📊 ڕاپۆرتی هەفتانە</button>
-                <button id="btn-print-monthly" class="btn btn-warning">📊 ڕاپۆرتی مانگانە</button>
-                <button id="btn-print-all-bulk" class="btn btn-blue">🖨️ پرنتی گشتی هەموو پسوڵەکان</button>
+            <!-- بەشی زیادکراو: دوگمەی ڕاپۆرتەکان و فلتەری بەروار -->
+            <div class="admin-only" style="display: flex; flex-direction: column; gap: 1rem; background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <h3 style="width: 100%; font-size: 1.1rem; font-weight: bold;">📊 ڕاپۆرتەکان، قازانج و چاپکردن</h3>
+                
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button id="btn-print-daily" class="btn btn-warning">📊 ڕاپۆرتی ڕۆژانە</button>
+                    <button id="btn-print-weekly" class="btn btn-warning">📊 ڕاپۆرتی هەفتانە</button>
+                    <button id="btn-print-monthly" class="btn btn-warning">📊 ڕاپۆرتی مانگانە</button>
+                    <button id="btn-print-all-bulk" class="btn btn-blue">🖨️ پرنتی گشتی هەموو پسوڵەکان</button>
+                </div>
+
+                <!-- ✨ فلتەری داینامیکی بەروار و سەیرکردنی قازانج -->
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; background: var(--gray-50); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--gray-200); margin-top: 0.5rem;">
+                    <span style="font-size: 0.85rem; font-weight: bold;">📅 ڕاپۆرت و قازانج بەپێی بەروار:</span>
+                    <div style="display: flex; align-items: center; gap: 0.3rem;">
+                        <label style="font-size: 0.8rem;">لە:</label>
+                        <input type="date" id="report-filter-start" class="form-input" style="width: auto; padding: 0.3rem 0.5rem;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.3rem;">
+                        <label style="font-size: 0.8rem;">بۆ:</label>
+                        <input type="date" id="report-filter-end" class="form-input" style="width: auto; padding: 0.3rem 0.5rem;">
+                    </div>
+                    <button id="btn-filter-reports" class="btn btn-primary" style="padding: 0.35rem 0.75rem;">پشکنین & گەڕان</button>
+                    <button id="btn-print-custom-range" class="btn btn-blue" style="padding: 0.35rem 0.75rem;">🖨️ چاپکردنی ئەم فلتەرە</button>
+                </div>
+
+                <!-- ✨ نیشاندانی تابلۆی قازانج و وردەکاری بە بەروار -->
+                <div id="date-range-summary-box" class="hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.85rem; border-radius: 0.5rem;">
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--gray-700);">کۆی فرۆشی مەوداکە:</span>
+                        <h4 id="filtered-sales-sum" style="font-size: 1.1rem; font-weight: bold; color: var(--blue-600);">0 د.ع</h4>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--gray-700);">کۆی تێچووی کڕین:</span>
+                        <h4 id="filtered-cost-sum" style="font-size: 1.1rem; font-weight: bold; color: var(--slate-700);">0 د.ع</h4>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--gray-700);">داشکاندنەکان:</span>
+                        <h4 id="filtered-discount-sum" style="font-size: 1.1rem; font-weight: bold; color: var(--orange-600);">0 د.ع</h4>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--gray-700);">سافی قازانجی ئەم بەروارە:</span>
+                        <h4 id="filtered-profit-sum" style="font-size: 1.2rem; font-weight: bold; color: var(--emerald-600);">0 د.ع</h4>
+                    </div>
+                </div>
             </div>
 
             <div class="table-container">
-                <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 1rem;">تۆماری خێرای دوایین وەسڵەکان</h3>
+                <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 1rem;">تۆماری خێرای دوایین وەسڵەکان (یان بەپێی بەروار)</h3>
                 <table>
                     <thead>
                         <tr>
@@ -527,6 +573,7 @@
                             <th>کۆی گشتی</th>
                             <th>دراو (کاش)</th>
                             <th>قەرز</th>
+                            <th class="admin-only">قازانج</th>
                             <th>ڕێکەوت</th>
                         </tr>
                     </thead>
@@ -600,7 +647,7 @@
                 <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); display: flex; flex-direction: column; justify-content: space-between; gap: 1.5rem;">
                     <div>
                         <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.875rem; margin-bottom: 0.25rem; display: flex; justify-content: space-between; align-items: center;">
+                            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; margin-bottom: 0.25rem;">
                                 <span>کڕیار دەستنیشان بکە</span>
                                 <button id="btn-quick-add-cust" class="btn" style="padding: 0.1rem 0.4rem; font-size: 0.75rem; background-color: #ecfdf5; color: var(--emerald-600);">+ خێرا (ناو و ناونیشان)</button>
                             </label>
@@ -995,6 +1042,7 @@
 
         let html5QrcodeScanner = null;
         let activeTargetInputId = "";
+        let currentFilteredInvoices = null; // پاشەکەوتکردنی وەسڵە فلتەرکراوەکان
 
         // هەناردەکردنی فەنکشنەکان بۆ Window
         window.switchTab = switchTab;
@@ -1063,6 +1111,7 @@
                 renderInventory();
                 updateProductsDatalist();
                 calculateInvoiceTotals();
+                calculateOverallStats();
             });
 
             onSnapshot(collection(db, "customers"), (snapshot) => {
@@ -1090,6 +1139,7 @@
                 appState.invoices = [];
                 snapshot.forEach(doc => appState.invoices.push({ id: doc.id, ...doc.data() }));
                 renderRecentInvoices();
+                calculateOverallStats();
             });
 
             onSnapshot(collection(db, "cashbook"), (snapshot) => {
@@ -1167,6 +1217,10 @@
             document.getElementById('btn-print-weekly').addEventListener('click', () => generatePeriodReport('هەفتانە', 7));
             document.getElementById('btn-print-monthly').addEventListener('click', () => generatePeriodReport('مانگانە', 30));
             document.getElementById('btn-print-all-bulk').addEventListener('click', printAllInvoicesBulk);
+
+            // ✨ گوێگرە نوێیەکان بۆ بەشی فلتەرکردن بە بەروار و حیسابکردنی قازانج
+            document.getElementById('btn-filter-reports').addEventListener('click', filterInvoicesByDateRange);
+            document.getElementById('btn-print-custom-range').addEventListener('click', printCustomRangeReport);
         }
 
         // لۆجیکی Login و دەسەڵاتەکان
@@ -1271,6 +1325,25 @@
             document.getElementById(`btn-${tabId}`).classList.add('active');
         }
 
+        // ✨ فەنکشنی سەرەکی هەژمارکردنی قازانج بۆ تاکی ئایتم یان کۆی وەسڵ
+        function calculateInvoiceProfit(inv) {
+            if (!inv || !inv.items) return 0;
+            let totalCost = 0;
+
+            inv.items.forEach(it => {
+                let buyPrice = it.buyPrice;
+                if (buyPrice === undefined || buyPrice === null) {
+                    const matchProd = appState.products.find(p => p.name.trim() === it.name.trim() || (p.partNo && it.name.includes(p.partNo)));
+                    buyPrice = matchProd ? Number(matchProd.buyPrice || 0) : 0;
+                }
+                totalCost += (Number(buyPrice) * Number(it.qty || 1));
+            });
+
+            const profitBeforeDiscount = Number(inv.subtotal || 0) - totalCost;
+            const netProfit = profitBeforeDiscount - Number(inv.discount || 0);
+            return netProfit;
+        }
+
         function calculateOverallStats() {
             let totalCustDebt = appState.customers.reduce((acc, c) => acc + Number(c.totalDebt || 0), 0);
             let totalCompOwed = appState.companies.reduce((acc, c) => acc + Number(c.totalOwed || 0), 0);
@@ -1278,9 +1351,18 @@
             let cashOut = appState.cashBook.transactions.filter(t => t.type === 'out').reduce((acc, t) => acc + Number(t.amount || 0), 0);
             let netCash = appState.cashBook.openingBalance + cashIn - cashOut;
 
+            // ✨ هەژمارکردنی قازانجی صافی ئەمڕۆ
+            const todayStart = new Date();
+            todayStart.setHours(0,0,0,0);
+            const todayTimestamp = todayStart.getTime();
+
+            const todayInvoices = appState.invoices.filter(inv => (inv.timestamp || 0) >= todayTimestamp);
+            let todayProfit = todayInvoices.reduce((acc, inv) => acc + calculateInvoiceProfit(inv), 0);
+
             document.getElementById('card-customer-debt').innerText = totalCustDebt.toLocaleString() + " د.ع";
             document.getElementById('card-company-debt').innerText = totalCompOwed.toLocaleString() + " د.ع";
             document.getElementById('card-cash-balance').innerText = netCash.toLocaleString() + " د.ع";
+            document.getElementById('card-today-profit').innerText = todayProfit.toLocaleString() + " د.ع";
         }
 
         /* ================= بەشی کۆگا ================= */
@@ -1511,8 +1593,12 @@
                 const qty = Number(row.querySelector('.item-qty').value) || 0;
                 const price = Number(row.querySelector('.item-price').value) || 0;
                 if (qty > 0) {
+                    // پاشەکەوتکردنی نرخی کڕین (Cost Price) بۆ هەر ئایتمێک لەگەڵ فرۆشتنەکە
+                    const dbProduct = appState.products.find(p => name.includes(p.name) || p.name.includes(name));
+                    const buyPrice = dbProduct ? Number(dbProduct.buyPrice || 0) : 0;
+                    
                     subtotal += (qty * price);
-                    items.push({ name, qty, price, total: (qty * price) });
+                    items.push({ name, qty, price, buyPrice, total: (qty * price) });
                 }
             });
 
@@ -1576,14 +1662,21 @@
             calculateInvoiceTotals();
         }
 
-        function renderRecentInvoices() {
+        function renderRecentInvoices(invoicesToRender = null) {
             const tbody = document.getElementById('recent-invoices-tbody');
             tbody.innerHTML = '';
-            if (appState.invoices.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--gray-500); padding: 1rem;">هیچ وەسڵێک تۆمار نەکراوە.</td></tr>`;
+            
+            const list = invoicesToRender || [...appState.invoices].reverse().slice(0, 10);
+            
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--gray-500); padding: 1rem;">هیچ وەسڵێک تۆمار نەکراوە یان لەم بەروارەدا نییە.</td></tr>`;
                 return;
             }
-            [...appState.invoices].reverse().slice(0, 5).forEach(inv => {
+
+            const isStaff = appState.currentUser && appState.currentUser.role === 'staff';
+
+            list.forEach(inv => {
+                const profit = calculateInvoiceProfit(inv);
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
                         <td style="font-weight: bold; color: var(--slate-500);">${inv.invoiceId}</td>
@@ -1591,6 +1684,7 @@
                         <td style="font-weight: bold;">${(inv.finalAmount || 0).toLocaleString()}</td>
                         <td style="color: var(--emerald-600);">${(inv.paid || 0).toLocaleString()}</td>
                         <td style="color: var(--red-600);">${(inv.debt || 0).toLocaleString()}</td>
+                        <td class="${isStaff ? 'hidden' : ''}" style="color: var(--emerald-600); font-weight: bold;">${profit.toLocaleString()} د.ع</td>
                         <td style="color: var(--gray-500); font-size: 0.75rem;">${inv.date}</td>
                     </tr>
                 `;
@@ -1654,8 +1748,75 @@
             }
         }
 
-        /* ================= سیستەمی پرنتکردنی ڕاپۆرت و کڕیار ================= */
+        /* ================= سیستەمی فلتەرکردن بە بەروار و پرنتکردنی قازانج ================= */
         
+        function filterInvoicesByDateRange() {
+            const startVal = document.getElementById('report-filter-start').value;
+            const endVal = document.getElementById('report-filter-end').value;
+
+            if (!startVal || !endVal) return alert("تکایە هەردوو بەرواری دەستپێک و کۆتایی هەڵبژێرە!");
+
+            const startDate = new Date(startVal);
+            startDate.setHours(0,0,0,0);
+            const startMs = startDate.getTime();
+
+            const endDate = new Date(endVal);
+            endDate.setHours(23,59,59,999);
+            const endMs = endDate.getTime();
+
+            const filtered = appState.invoices.filter(inv => {
+                const t = inv.timestamp || 0;
+                return t >= startMs && t <= endMs;
+            });
+
+            currentFilteredInvoices = filtered;
+
+            let totalSales = 0;
+            let totalCost = 0;
+            let totalDiscounts = 0;
+            let totalNetProfit = 0;
+
+            filtered.forEach(inv => {
+                totalSales += Number(inv.subtotal || 0);
+                totalDiscounts += Number(inv.discount || 0);
+
+                let invCost = 0;
+                if (inv.items) {
+                    inv.items.forEach(it => {
+                        let bp = it.buyPrice;
+                        if (bp === undefined || bp === null) {
+                            const p = appState.products.find(prod => prod.name.trim() === it.name.trim() || (prod.partNo && it.name.includes(prod.partNo)));
+                            bp = p ? Number(p.buyPrice || 0) : 0;
+                        }
+                        invCost += (Number(bp) * Number(it.qty || 1));
+                    });
+                }
+                totalCost += invCost;
+                totalNetProfit += calculateInvoiceProfit(inv);
+            });
+
+            document.getElementById('filtered-sales-sum').innerText = totalSales.toLocaleString() + " د.ع";
+            document.getElementById('filtered-cost-sum').innerText = totalCost.toLocaleString() + " د.ع";
+            document.getElementById('filtered-discount-sum').innerText = totalDiscounts.toLocaleString() + " د.ع";
+            document.getElementById('filtered-profit-sum').innerText = totalNetProfit.toLocaleString() + " د.ع";
+
+            document.getElementById('date-range-summary-box').classList.remove('hidden');
+
+            renderRecentInvoices(filtered);
+        }
+
+        function printCustomRangeReport() {
+            const startVal = document.getElementById('report-filter-start').value;
+            const endVal = document.getElementById('report-filter-end').value;
+
+            if (!currentFilteredInvoices || currentFilteredInvoices.length === 0) {
+                return alert("تکایە سەرەتا بەروارەکان دیاری بکە و دوگمەی 'پشکنین & گەڕان' دابگرە!");
+            }
+
+            const title = `بەپێی بەروار (${startVal} تا ${endVal})`;
+            buildAndPrintReportHTML(title, currentFilteredInvoices);
+        }
+
         function buildSingleInvoiceHTML(customer) {
             const custInvoices = appState.invoices.filter(inv => inv.customerId === customer.id || inv.customerName === customer.name);
             let rowsHTML = "";
@@ -1738,21 +1899,27 @@
         }
 
         function generatePeriodReport(title, days) {
-            const printArea = document.getElementById('custom-print-area');
-            printArea.innerHTML = "";
-            
             const timeLimit = Date.now() - (days * 24 * 60 * 60 * 1000);
             const filteredInvoices = appState.invoices.filter(inv => (inv.timestamp || 0) >= timeLimit);
+            buildAndPrintReportHTML(title, filteredInvoices);
+        }
+
+        function buildAndPrintReportHTML(title, filteredInvoices) {
+            const printArea = document.getElementById('custom-print-area');
+            printArea.innerHTML = "";
             
             let totalSales = 0;
             let totalCashReceived = 0;
             let totalNewDebt = 0;
+            let totalProfit = 0;
             let rowsHTML = "";
             
             filteredInvoices.forEach(inv => {
+                const profit = calculateInvoiceProfit(inv);
                 totalSales += Number(inv.finalAmount || 0);
                 totalCashReceived += Number(inv.paid || 0);
                 totalNewDebt += Number(inv.debt || 0);
+                totalProfit += profit;
                 
                 rowsHTML += `
                     <tr>
@@ -1761,34 +1928,39 @@
                         <td>${Number(inv.finalAmount || 0).toLocaleString()} د.ع</td>
                         <td style="color:var(--emerald-600);">${Number(inv.paid || 0).toLocaleString()} د.ع</td>
                         <td style="color:var(--red-600);">${Number(inv.debt || 0).toLocaleString()} د.ع</td>
+                        <td style="color:var(--emerald-600); font-weight:bold;">${profit.toLocaleString()} د.ع</td>
                         <td>${inv.date}</td>
                     </tr>`;
             });
             
             if(rowsHTML === "") {
-                rowsHTML = `<tr><td colspan="6" style="text-align:center; padding:15px;">هیچ جووڵە و کڕینێک لەم ماوەیەدا تۆمارنەکراوە.</td></tr>`;
+                rowsHTML = `<tr><td colspan="7" style="text-align:center; padding:15px;">هیچ جووڵە و کڕینێک لەم ماوەیەدا تۆمارنەکراوە.</td></tr>`;
             }
 
             printArea.innerHTML = `
                 <div style="direction:rtl; font-family:'Vazirmatn', sans-serif;">
                     <div style="text-align:center; margin-bottom:25px;">
-                        <h2 style="font-size:1.6rem; font-weight:bold;">📊 ڕاپۆرتی ${title}ی فرۆشتن و قەرزەکان</h2>
+                        <h2 style="font-size:1.6rem; font-weight:bold;">📊 ڕاپۆرتی ${title}ی فرۆشتن و قازانج</h2>
                         <p style="margin-top:2px; font-weight:bold;">ڕادێتەری ناسڕ (بە سەرپەرشتی وەستا ڕێباز)</p>
                         <p style="margin-top:5px; font-size:0.85rem; color:#555;">ڕێکەوتی چاپکردنی ڕاپۆرت: ${new Date().toLocaleDateString('ku-IQ')}</p>
                     </div>
                     
-                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-bottom:25px; border:1px solid #ccc; padding:15px; border-radius:8px; background:#f9fafb;">
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:25px; border:1px solid #ccc; padding:15px; border-radius:8px; background:#f9fafb;">
                         <div style="text-align:center;">
-                            <span style="display:block; font-size:0.9rem; color:#666;">کۆی گشتی فرۆشراو</span>
-                            <strong style="font-size:1.3rem; color:var(--blue-600);">${totalSales.toLocaleString()} د.ع</strong>
+                            <span style="display:block; font-size:0.85rem; color:#666;">کۆی گشتی فرۆشراو</span>
+                            <strong style="font-size:1.2rem; color:var(--blue-600);">${totalSales.toLocaleString()} د.ع</strong>
                         </div>
                         <div style="text-align:center;">
-                            <span style="display:block; font-size:0.9rem; color:#666;">کۆی نەختینەی هاتوو (کاش)</span>
-                            <strong style="font-size:1.3rem; color:var(--emerald-600);">${totalCashReceived.toLocaleString()} د.ع</strong>
+                            <span style="display:block; font-size:0.85rem; color:#666;">کۆی نەختینەی هاتوو (کاش)</span>
+                            <strong style="font-size:1.2rem; color:var(--emerald-600);">${totalCashReceived.toLocaleString()} د.ع</strong>
                         </div>
                         <div style="text-align:center;">
-                            <span style="display:block; font-size:0.9rem; color:#666;">کۆی قەرزی نوێی سەر کڕیاران</span>
-                            <strong style="font-size:1.3rem; color:var(--red-600);">${totalNewDebt.toLocaleString()} د.ع</strong>
+                            <span style="display:block; font-size:0.85rem; color:#666;">کۆی قەرزی نوێ</span>
+                            <strong style="font-size:1.2rem; color:var(--red-600);">${totalNewDebt.toLocaleString()} د.ع</strong>
+                        </div>
+                        <div style="text-align:center;">
+                            <span style="display:block; font-size:0.85rem; color:#666;">سافی قازانجی ئەم ماوەیە</span>
+                            <strong style="font-size:1.2rem; color:var(--emerald-600);">${totalProfit.toLocaleString()} د.ع</strong>
                         </div>
                     </div>
                     
@@ -1801,6 +1973,7 @@
                                 <th>کۆی وەسڵ</th>
                                 <th>کاش (دراو)</th>
                                 <th>ماوە (قەرز)</th>
+                                <th>قازانج</th>
                                 <th>ڕێکەوت</th>
                             </tr>
                         </thead>
