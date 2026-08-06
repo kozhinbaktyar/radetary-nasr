@@ -1325,7 +1325,7 @@
             document.getElementById(`btn-${tabId}`).classList.add('active');
         }
 
-        // ✨ فەنکشنی سەرەکی هەژمارکردنی قازانج بۆ تاکی ئایتم یان کۆی وەسڵ
+        // ✨ فەنکشنی سەرەکی هەژمارکردنی قازانج (دەستکاریکراو بۆ دەربڕینی قەرز)
         function calculateInvoiceProfit(inv) {
             if (!inv || !inv.items) return 0;
             let totalCost = 0;
@@ -1341,7 +1341,12 @@
 
             const profitBeforeDiscount = Number(inv.subtotal || 0) - totalCost;
             const netProfit = profitBeforeDiscount - Number(inv.discount || 0);
-            return netProfit;
+
+            // 🟢 بەشی نوێ: دەرکردنی بڕی قەرز لە قازانج تا کاتی تەسفیە بوونی وەسڵەکە
+            const debtAmount = Number(inv.debt || 0);
+            const actualRealizedProfit = Math.max(0, netProfit - debtAmount);
+
+            return actualRealizedProfit;
         }
 
         function calculateOverallStats() {
@@ -1733,16 +1738,43 @@
             openModal('customer-pay-modal');
         }
 
+        // ✨ هەژمارکردنەوەی ئۆتۆماتیکی قەرزی سەر وەسڵەکان لە کاتی پارەدانەوەی کڕیار
         async function saveCustomerPayment() {
             const custId = document.getElementById('selected-cust-id').value;
-            const amount = Number(document.getElementById('cust-pay-amount').value) || 0;
+            let amount = Number(document.getElementById('cust-pay-amount').value) || 0;
             if (amount <= 0) return;
 
             const c = appState.customers.find(cust => cust.id === custId);
             if (c) {
                 if (amount > c.totalDebt) return alert("بڕی پارەکە زیاترە لە قەرزەکە!");
+                
                 await updateDoc(doc(db, "customers", custId), { totalDebt: c.totalDebt - amount });
                 await addDoc(collection(db, "cashbook"), { type: 'in', amount, desc: `وەرگرتنەوەی قەرز لە کڕیار: ${c.name}`, timestamp: Date.now() });
+
+                // 🟢 کەمکردنەوەی قەرز بە شێوەی ئۆتۆماتیکی لەسەر وەسڵەکانی ئەم کڕیارە تا قازانجەکە ئۆتۆماتیکی نوێ ببێتەوە
+                let remainingPay = amount;
+                const custInvoices = appState.invoices
+                    .filter(inv => (inv.customerId === custId || inv.customerName === c.name) && (inv.debt || 0) > 0)
+                    .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                for (let inv of custInvoices) {
+                    if (remainingPay <= 0) break;
+                    const invDebt = Number(inv.debt || 0);
+                    if (remainingPay >= invDebt) {
+                        remainingPay -= invDebt;
+                        await updateDoc(doc(db, "invoices", inv.id), { 
+                            paid: (inv.paid || 0) + invDebt, 
+                            debt: 0 
+                        });
+                    } else {
+                        await updateDoc(doc(db, "invoices", inv.id), { 
+                            paid: (inv.paid || 0) + remainingPay, 
+                            debt: invDebt - remainingPay 
+                        });
+                        remainingPay = 0;
+                    }
+                }
+
                 closeModal('customer-pay-modal');
                 document.getElementById('cust-pay-amount').value = '';
             }
@@ -2067,13 +2099,13 @@
         }
 
         async function saveCompany() {
-            const name = document.getElementById('new-comp-name').value;
-            const contact = document.getElementById('new-comp-contact').value;
-            const phone = document.getElementById('new-comp-phone').value;
-            if (!name) return;
+            const name = document.getElementById('new-comp-name').value.trim();
+            const contact = document.getElementById('new-comp-contact').value.trim();
+            const phone = document.getElementById('new-comp-phone').value.trim();
+            if (!name) return alert("تکایە ناوی کۆمپانیا بنووسە");
 
-            const compId = 'COMP_' + Date.now();
-            await setDoc(doc(db, "companies", compId), { name, contact, phone, totalOwed: 0 });
+            const cid = 'COMP_' + Date.now();
+            await setDoc(doc(db, "companies", cid), { name, contact, phone, totalOwed: 0 });
             closeModal('company-modal');
             document.getElementById('new-comp-name').value = '';
             document.getElementById('new-comp-contact').value = '';
@@ -2082,36 +2114,7 @@
 
         function openCompTransModal(compId) {
             document.getElementById('selected-comp-id').value = compId;
-            document.getElementById('comp-trans-file').value = '';
             openModal('company-trans-modal');
-        }
-
-        function compressImage(file, maxWidth = 800, quality = 0.7) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                };
-            });
         }
 
         async function saveCompanyTransaction() {
@@ -2119,87 +2122,120 @@
             const type = document.getElementById('comp-trans-type').value;
             const amount = Number(document.getElementById('comp-trans-amount').value) || 0;
             const fileInput = document.getElementById('comp-trans-file');
-            
-            if (amount <= 0) return alert("تکایە بڕی پارە بنووسە!");
+
+            if (amount <= 0) return alert("تکایە بڕی پارە بە دروستی بنووسە!");
+
             const comp = appState.companies.find(c => c.id === compId);
             if (!comp) return;
 
-            let base64Image = "";
+            let imageBase64 = null;
             if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
-                base64Image = await compressImage(file, 800, 0.6); 
+                imageBase64 = await compressImage(fileInput.files[0]);
             }
 
-            const transId = 'CTR_' + Date.now();
-            
-            try {
-                await setDoc(doc(db, "comp_transactions", transId), {
-                    id: transId, companyId: compId, type, amount, image: base64Image, timestamp: Date.now()
-                });
+            const transId = 'CTRANS_' + Date.now();
+            await setDoc(doc(db, "comp_transactions", transId), {
+                transId, companyId: compId, type, amount, image: imageBase64, timestamp: Date.now()
+            });
 
-                if (type === 'pay') {
-                    await updateDoc(doc(db, "companies", compId), { totalOwed: Math.max(0, (comp.totalOwed || 0) - amount) });
-                    await addDoc(collection(db, "cashbook"), { type: 'out', amount, desc: `دانەوەی قەرزی کۆمپانیا: ${comp.name}`, timestamp: Date.now() });
-                } else {
-                    await updateDoc(doc(db, "companies", compId), { totalOwed: (comp.totalOwed || 0) + amount });
-                }
-
-                closeModal('company-trans-modal');
-                document.getElementById('comp-trans-amount').value = '';
-                fileInput.value = '';
-            } catch (error) {
-                alert("کێشەیەک لە پاشەکەوتکردن هەبوو: " + error.message);
+            let newTotal = comp.totalOwed || 0;
+            if (type === 'pay') {
+                newTotal = Math.max(0, newTotal - amount);
+                await addDoc(collection(db, "cashbook"), { type: 'out', amount, desc: `دانەوەی قەرزی کۆمپانیای: ${comp.name}`, timestamp: Date.now() });
+            } else if (type === 'get_goods') {
+                newTotal += amount;
             }
+
+            await updateDoc(doc(db, "companies", compId), { totalOwed: newTotal });
+
+            closeModal('company-trans-modal');
+            document.getElementById('comp-trans-amount').value = '';
+            fileInput.value = '';
         }
 
-        /* ================= بەشی سندوق ================= */
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxDim = 800;
+
+                        if (width > height && width > maxDim) {
+                            height *= maxDim / width;
+                            width = maxDim;
+                        } else if (height > maxDim) {
+                            width *= maxDim / height;
+                            height = maxDim;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        /* ================= بەشی سندوقی ڕۆژانە ================= */
         function renderCashbook() {
             const tbody = document.getElementById('cashflow-tbody');
             tbody.innerHTML = '';
-            let totalIn = 0, totalOut = 0;
-            const sortedTrans = [...appState.cashBook.transactions].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+            const sorted = [...appState.cashBook.transactions].sort((a,b) => b.timestamp - a.timestamp);
+            
+            let cashIn = 0;
+            let cashOut = 0;
 
-            sortedTrans.forEach(t => {
-                if (t.type === 'in') totalIn += Number(t.amount || 0);
-                if (t.type === 'out') totalOut += Number(t.amount || 0);
+            sorted.forEach(t => {
+                if(t.type === 'in') cashIn += Number(t.amount);
+                if(t.type === 'out') cashOut += Number(t.amount);
+
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
-                        <td>
-                            <span style="padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.75rem; background-color: ${t.type === 'in' ? '#ecfdf5' : 'var(--red-50)'}; color: ${t.type === 'in' ? 'var(--emerald-600)' : 'var(--red-600)'}">
-                                ${t.type === 'in' ? 'هاتوو (+)' : 'خەرجی (-)'}
-                            </span>
-                        </td>
-                        <td style="font-weight: bold;">${Number(t.amount || 0).toLocaleString()} د.ع</td>
-                        <td>${t.desc || ''}</td>
-                        <td style="color: var(--gray-500); font-size: 0.75rem;">${new Date(t.timestamp || Date.now()).toLocaleTimeString('ku-IQ')}</td>
+                        <td><span style="color: ${t.type === 'in' ? 'var(--emerald-600)' : 'var(--red-600)'}; font-weight: bold;">${t.type === 'in' ? 'داخڵبوون (+)' : 'خەرجکردن (-)'}</span></td>
+                        <td style="font-weight: bold;">${Number(t.amount).toLocaleString()} د.ع</td>
+                        <td>${t.desc || 'بێ تێبینی'}</td>
+                        <td style="font-size:0.75rem; color:var(--gray-500);">${new Date(t.timestamp).toLocaleTimeString('ku-IQ', {hour:'2-digit', minute:'2-digit'})}</td>
                     </tr>
                 `;
             });
 
-            const opening = appState.cashBook.openingBalance;
-            const finalCash = opening + totalIn - totalOut;
-            document.getElementById('cb-opening').innerText = opening.toLocaleString() + " د.ع";
-            document.getElementById('cb-in').innerText = totalIn.toLocaleString() + " د.ع";
-            document.getElementById('cb-out').innerText = totalOut.toLocaleString() + " د.ع";
-            document.getElementById('cb-final').innerText = finalCash.toLocaleString() + " د.ع";
+            document.getElementById('cb-opening').innerText = appState.cashBook.openingBalance.toLocaleString() + " د.ع";
+            document.getElementById('cb-in').innerText = cashIn.toLocaleString() + " د.ع";
+            document.getElementById('cb-out').innerText = cashOut.toLocaleString() + " د.ع";
+            document.getElementById('cb-final').innerText = (appState.cashBook.openingBalance + cashIn - cashOut).toLocaleString() + " د.ع";
         }
 
         async function saveManualCash(type) {
-            const amountInput = type === 'in' ? 'cashbook-in-amount' : 'cashbook-out-amount';
-            const descInput = type === 'in' ? 'cashbook-in-desc' : 'cashbook-out-desc';
-            const modalId = type === 'in' ? 'cash-in-modal' : 'cash-out-modal';
-            const amount = Number(document.getElementById(amountInput).value) || 0;
-            const desc = document.getElementById(descInput).value || (type === 'in' ? 'هاتنی کاشی دەستی' : 'خەرجی دەستی');
-            if (amount <= 0) return;
+            const amountElem = document.getElementById(type === 'in' ? 'cashbook-in-amount' : 'cashbook-out-amount');
+            const descElem = document.getElementById(type === 'in' ? 'cashbook-in-desc' : 'cashbook-out-desc');
+            const amount = Number(amountElem.value) || 0;
+            const desc = descElem.value.trim();
+
+            if (amount <= 0) return alert("تکایە بڕی پارە دیاری بکە!");
 
             await addDoc(collection(db, "cashbook"), { type, amount, desc, timestamp: Date.now() });
-            closeModal(modalId);
-            document.getElementById(amountInput).value = '';
-            document.getElementById(descInput).value = '';
+
+            closeModal(type === 'in' ? 'cash-in-modal' : 'cash-out-modal');
+            amountElem.value = '';
+            descElem.value = '';
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        /* ================= یارمەتیدەرە گشتییەکان (Helpers) ================= */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
     </script>
 </body>
 </html>
