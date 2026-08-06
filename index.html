@@ -1042,7 +1042,7 @@
 
         let html5QrcodeScanner = null;
         let activeTargetInputId = "";
-        let currentFilteredInvoices = null; // پاشەکەوتکردنی وەسڵە فلتەرکراوەکان
+        let currentFilteredInvoices = null;
 
         // هەناردەکردنی فەنکشنەکان بۆ Window
         window.switchTab = switchTab;
@@ -1067,7 +1067,14 @@
             checkDefaultAdmin();
         });
 
-        // لۆجیکی بەکارهێنەران و چوونەژوورەوە
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
         async function checkDefaultAdmin() {
             onSnapshot(collection(db, "users"), (snapshot) => {
                 appState.users = [];
@@ -1135,6 +1142,7 @@
                 renderCompanyHistory();
             });
 
+            // بەستنەوەی ڕاستەوخۆ (Real-Time) لە نێوان مۆبایل و کۆمپیوتەر بۆ وەسڵەکان
             onSnapshot(collection(db, "invoices"), (snapshot) => {
                 appState.invoices = [];
                 snapshot.forEach(doc => appState.invoices.push({ id: doc.id, ...doc.data() }));
@@ -1218,12 +1226,10 @@
             document.getElementById('btn-print-monthly').addEventListener('click', () => generatePeriodReport('مانگانە', 30));
             document.getElementById('btn-print-all-bulk').addEventListener('click', printAllInvoicesBulk);
 
-            // ✨ گوێگرە نوێیەکان بۆ بەشی فلتەرکردن بە بەروار و حیسابکردنی قازانج
             document.getElementById('btn-filter-reports').addEventListener('click', filterInvoicesByDateRange);
             document.getElementById('btn-print-custom-range').addEventListener('click', printCustomRangeReport);
         }
 
-        // لۆجیکی Login و دەسەڵاتەکان
         function handleLogin() {
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
@@ -1325,7 +1331,6 @@
             document.getElementById(`btn-${tabId}`).classList.add('active');
         }
 
-        // ✨ فەنکشنی سەرەکی هەژمارکردنی قازانج (دەستکاریکراو بۆ دەربڕینی قەرز)
         function calculateInvoiceProfit(inv) {
             if (!inv || !inv.items) return 0;
             let totalCost = 0;
@@ -1342,7 +1347,6 @@
             const profitBeforeDiscount = Number(inv.subtotal || 0) - totalCost;
             const netProfit = profitBeforeDiscount - Number(inv.discount || 0);
 
-            // 🟢 بەشی نوێ: دەرکردنی بڕی قەرز لە قازانج تا کاتی تەسفیە بوونی وەسڵەکە
             const debtAmount = Number(inv.debt || 0);
             const actualRealizedProfit = Math.max(0, netProfit - debtAmount);
 
@@ -1356,7 +1360,6 @@
             let cashOut = appState.cashBook.transactions.filter(t => t.type === 'out').reduce((acc, t) => acc + Number(t.amount || 0), 0);
             let netCash = appState.cashBook.openingBalance + cashIn - cashOut;
 
-            // ✨ هەژمارکردنی قازانجی صافی ئەمڕۆ
             const todayStart = new Date();
             todayStart.setHours(0,0,0,0);
             const todayTimestamp = todayStart.getTime();
@@ -1510,7 +1513,7 @@
                 const rowId = 'row_' + Date.now();
                 container.insertAdjacentHTML('beforeend', `
                     <div id="${rowId}" class="invoice-item-row" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.75rem; align-items: center;">
-                        <input type="text" value="${product.name} (${product.partNo})" list="products-datalist" oninput="handleDatalistSelection(this, '${rowId}')" class="form-input item-name" style="grid-column: span 5;">
+                        <input type="text" value="${product.name} (${product.partNo})" list="products-datalist" onchange="handleDatalistSelection(this, '${rowId}')" oninput="handleDatalistSelection(this, '${rowId}')" class="form-input item-name" style="grid-column: span 5;">
                         <input type="number" value="1" min="1" oninput="calculateInvoiceTotals()" class="form-input item-qty" style="grid-column: span 2;">
                         <input type="number" value="${product.sellPrice}" min="0" oninput="calculateInvoiceTotals()" class="form-input item-price" style="grid-column: span 3;">
                         <button onclick="removeInvoiceRow('${rowId}')" class="btn btn-danger" style="grid-column: span 2; padding: 0.25rem 0.5rem; font-size: 0.75rem;">لادان</button>
@@ -1536,7 +1539,7 @@
             const rowId = 'row_' + Date.now();
             container.insertAdjacentHTML('beforeend', `
                 <div id="${rowId}" class="invoice-item-row" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 0.75rem; align-items: center;">
-                    <input type="text" placeholder="ناوی کاڵا یان پارت نەمبەر بنووسە..." list="products-datalist" oninput="handleDatalistSelection(this, '${rowId}')" class="form-input item-name" style="grid-column: span 5;">
+                    <input type="text" placeholder="ناوی کاڵا یان پارت نەمبەر بنووسە..." list="products-datalist" onchange="handleDatalistSelection(this, '${rowId}')" oninput="handleDatalistSelection(this, '${rowId}')" class="form-input item-name" style="grid-column: span 5;">
                     <input type="number" value="1" min="1" oninput="calculateInvoiceTotals()" class="form-input item-qty" style="grid-column: span 2;">
                     <input type="number" value="0" min="0" oninput="calculateInvoiceTotals()" class="form-input item-price" style="grid-column: span 3;">
                     <button onclick="removeInvoiceRow('${rowId}')" class="btn btn-danger" style="grid-column: span 2; padding: 0.25rem 0.5rem; font-size: 0.75rem;">لادان</button>
@@ -1545,15 +1548,25 @@
         }
 
         function handleDatalistSelection(inputElem, rowId) {
-            const val = inputElem.value;
+            const val = inputElem.value.trim();
             const option = document.querySelector(`#products-datalist option[value="${val}"]`);
+            
+            let matchProd = null;
             if (option) {
                 const prodName = option.getAttribute('data-name');
-                const prodPrice = option.getAttribute('data-price');
+                matchProd = appState.products.find(p => p.name === prodName);
+            } else {
+                matchProd = appState.products.find(p => 
+                    p.partNo && p.partNo.toLowerCase() === val.toLowerCase() ||
+                    p.name.toLowerCase() === val.toLowerCase()
+                );
+            }
+
+            if (matchProd) {
                 const row = document.getElementById(rowId);
                 if (row) {
-                    row.querySelector('.item-name').value = prodName;
-                    row.querySelector('.item-price').value = prodPrice;
+                    row.querySelector('.item-name').value = `${matchProd.name} (${matchProd.partNo || 'بێ کۆد'})`;
+                    row.querySelector('.item-price').value = matchProd.sellPrice;
                     calculateInvoiceTotals();
                 }
             }
@@ -1598,7 +1611,6 @@
                 const qty = Number(row.querySelector('.item-qty').value) || 0;
                 const price = Number(row.querySelector('.item-price').value) || 0;
                 if (qty > 0) {
-                    // پاشەکەوتکردنی نرخی کڕین (Cost Price) بۆ هەر ئایتمێک لەگەڵ فرۆشتنەکە
                     const dbProduct = appState.products.find(p => name.includes(p.name) || p.name.includes(name));
                     const buyPrice = dbProduct ? Number(dbProduct.buyPrice || 0) : 0;
                     
@@ -1627,12 +1639,10 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('ku-IQ') + " " + now.toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' });
             
-            // 💡 1. تۆمارکردنی ڕاستەوخۆ لەرێگەی Firebase
             await setDoc(doc(db, "invoices", invoiceId), { 
                 invoiceId, customerName, customerId, date: dateStr, items, subtotal, discount, finalAmount, paid, debt, timestamp: Date.now() 
             });
 
-            // 💡 2. کەمکردنەوەی ئۆتۆماتیکی لە ڕەسیدی کۆگا لەرێگەی Firebase
             for (const it of items) {
                 const dbProduct = appState.products.find(p => it.name.includes(p.name) || p.name.includes(it.name));
                 if (dbProduct) {
@@ -1640,7 +1650,6 @@
                 }
             }
 
-            // 💡 3. ئامادەکردنی بەشی وەسڵ بۆ پرنت (Thermal Printable Area)
             document.getElementById('print-date').innerText = dateStr;
             document.getElementById('print-customer').innerText = customerName;
             document.getElementById('print-inv-id').innerText = invoiceId;
@@ -1659,7 +1668,6 @@
             window.print();
             document.getElementById('receipt-print-area').classList.add('hidden');
 
-            // پاککردنەوەی فۆرمەکە بۆ وەسڵی داهاتوو
             document.getElementById('invoice-items-container').innerHTML = '';
             document.getElementById('invoice-discount').value = '0';
             document.getElementById('invoice-paid').value = '0';
@@ -1738,7 +1746,6 @@
             openModal('customer-pay-modal');
         }
 
-        // ✨ هەژمارکردنەوەی ئۆتۆماتیکی قەرزی سەر وەسڵەکان لە کاتی پارەدانەوەی کڕیار
         async function saveCustomerPayment() {
             const custId = document.getElementById('selected-cust-id').value;
             let amount = Number(document.getElementById('cust-pay-amount').value) || 0;
@@ -1751,7 +1758,6 @@
                 await updateDoc(doc(db, "customers", custId), { totalDebt: c.totalDebt - amount });
                 await addDoc(collection(db, "cashbook"), { type: 'in', amount, desc: `وەرگرتنەوەی قەرز لە کڕیار: ${c.name}`, timestamp: Date.now() });
 
-                // 🟢 کەمکردنەوەی قەرز بە شێوەی ئۆتۆماتیکی لەسەر وەسڵەکانی ئەم کڕیارە تا قازانجەکە ئۆتۆماتیکی نوێ ببێتەوە
                 let remainingPay = amount;
                 const custInvoices = appState.invoices
                     .filter(inv => (inv.customerId === custId || inv.customerName === c.name) && (inv.debt || 0) > 0)
@@ -2064,48 +2070,21 @@
                         <td>${imgThumb}</td>
                         <td style="font-size:0.75rem; color:var(--gray-500);">${new Date(t.timestamp).toLocaleDateString('ku-IQ')}</td>
                         <td>
-                            <button onclick="deleteCompanyTransaction('${t.id}')" class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">سڕینەوە</button>
+                            <button onclick="deleteCompanyTransaction('${t.id}')" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">سڕینەوە</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        async function deleteCompanyTransaction(transId) {
-            const trans = appState.companyTransactions.find(t => t.id === transId);
-            if (!trans) return;
-
-            if (confirm("دڵنیای لە سڕینەوەی ئەم مامەڵەیە؟")) {
-                const comp = appState.companies.find(c => c.id === trans.companyId);
-                
-                if (comp) {
-                    if (trans.type === 'pay') {
-                        await updateDoc(doc(db, "companies", comp.id), { totalOwed: (comp.totalOwed || 0) + Number(trans.amount) });
-                    } else if (trans.type === 'get_goods') {
-                        await updateDoc(doc(db, "companies", comp.id), { totalOwed: Math.max(0, (comp.totalOwed || 0) - Number(trans.amount)) });
-                    }
-                }
-
-                await deleteDoc(doc(db, "comp_transactions", transId));
-            }
-        }
-
-        function viewInvoiceImage(transId) {
-            const trans = appState.companyTransactions.find(t => t.id === transId);
-            if(trans && trans.image) {
-                document.getElementById('viewer-img').src = trans.image;
-                openModal('image-viewer-modal');
-            }
-        }
-
         async function saveCompany() {
             const name = document.getElementById('new-comp-name').value.trim();
             const contact = document.getElementById('new-comp-contact').value.trim();
             const phone = document.getElementById('new-comp-phone').value.trim();
-            if (!name) return alert("تکایە ناوی کۆمپانیا بنووسە");
+            if(!name) return alert("تکایە ناوی کۆمپانیا بنووسە");
 
-            const cid = 'COMP_' + Date.now();
-            await setDoc(doc(db, "companies", cid), { name, contact, phone, totalOwed: 0 });
+            const compId = 'COMP_' + Date.now();
+            await setDoc(doc(db, "companies", compId), { name, contact, phone, totalOwed: 0 });
             closeModal('company-modal');
             document.getElementById('new-comp-name').value = '';
             document.getElementById('new-comp-contact').value = '';
@@ -2123,119 +2102,119 @@
             const amount = Number(document.getElementById('comp-trans-amount').value) || 0;
             const fileInput = document.getElementById('comp-trans-file');
 
-            if (amount <= 0) return alert("تکایە بڕی پارە بە دروستی بنووسە!");
+            if (amount <= 0) return alert("تکایە بڕی پارە دیاری بکە!");
+
+            let imageBase64 = "";
+            if (fileInput.files && fileInput.files[0]) {
+                imageBase64 = await compressAndConvertToBase64(fileInput.files[0]);
+            }
 
             const comp = appState.companies.find(c => c.id === compId);
             if (!comp) return;
 
-            let imageBase64 = null;
-            if (fileInput.files && fileInput.files[0]) {
-                imageBase64 = await compressImage(fileInput.files[0]);
-            }
-
-            const transId = 'CTRANS_' + Date.now();
-            await setDoc(doc(db, "comp_transactions", transId), {
-                transId, companyId: compId, type, amount, image: imageBase64, timestamp: Date.now()
-            });
-
-            let newTotal = comp.totalOwed || 0;
+            let currentOwed = Number(comp.totalOwed || 0);
             if (type === 'pay') {
-                newTotal = Math.max(0, newTotal - amount);
-                await addDoc(collection(db, "cashbook"), { type: 'out', amount, desc: `دانەوەی قەرزی کۆمپانیای: ${comp.name}`, timestamp: Date.now() });
-            } else if (type === 'get_goods') {
-                newTotal += amount;
+                currentOwed = Math.max(0, currentOwed - amount);
+                await addDoc(collection(db, "cashbook"), { type: 'out', amount, desc: `دانەوەی پارە بە کۆمپانیای: ${comp.name}`, timestamp: Date.now() });
+            } else {
+                currentOwed += amount;
             }
 
-            await updateDoc(doc(db, "companies", compId), { totalOwed: newTotal });
+            await updateDoc(doc(db, "companies", compId), { totalOwed: currentOwed });
+            await addDoc(collection(db, "comp_transactions"), { companyId: compId, type, amount, image: imageBase64, timestamp: Date.now() });
 
             closeModal('company-trans-modal');
             document.getElementById('comp-trans-amount').value = '';
             fileInput.value = '';
         }
 
-        function compressImage(file) {
+        function compressAndConvertToBase64(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
                     const img = new Image();
+                    img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        const maxDim = 800;
+                        const MAX_WIDTH = 800;
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = (scaleSize < 1) ? MAX_WIDTH : img.width;
+                        canvas.height = (scaleSize < 1) ? (img.height * scaleSize) : img.height;
 
-                        if (width > height && width > maxDim) {
-                            height *= maxDim / width;
-                            width = maxDim;
-                        } else if (height > maxDim) {
-                            width *= maxDim / height;
-                            height = maxDim;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
                         const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
-                    img.src = e.target.result;
                 };
-                reader.readAsDataURL(file);
             });
+        }
+
+        function viewInvoiceImage(transId) {
+            const trans = appState.companyTransactions.find(t => t.id === transId);
+            if (trans && trans.image) {
+                document.getElementById('viewer-img').src = trans.image;
+                openModal('image-viewer-modal');
+            }
+        }
+
+        async function deleteCompanyTransaction(transId) {
+            if (confirm("دڵنیای لە سڕینەوەی ئەم مامەڵەیە؟")) {
+                await deleteDoc(doc(db, "comp_transactions", transId));
+            }
         }
 
         /* ================= بەشی سندوقی ڕۆژانە ================= */
         function renderCashbook() {
             const tbody = document.getElementById('cashflow-tbody');
             tbody.innerHTML = '';
-            const sorted = [...appState.cashBook.transactions].sort((a,b) => b.timestamp - a.timestamp);
             
-            let cashIn = 0;
-            let cashOut = 0;
+            const todayStart = new Date();
+            todayStart.setHours(0,0,0,0);
+            const todayMs = todayStart.getTime();
 
-            sorted.forEach(t => {
-                if(t.type === 'in') cashIn += Number(t.amount);
-                if(t.type === 'out') cashOut += Number(t.amount);
+            const todayTrans = appState.cashBook.transactions.filter(t => (t.timestamp || 0) >= todayMs);
+            
+            let totalIn = 0;
+            let totalOut = 0;
+
+            todayTrans.sort((a,b) => b.timestamp - a.timestamp).forEach(t => {
+                if (t.type === 'in') totalIn += Number(t.amount);
+                if (t.type === 'out') totalOut += Number(t.amount);
 
                 tbody.innerHTML += `
                     <tr style="font-size: 0.875rem;">
-                        <td><span style="color: ${t.type === 'in' ? 'var(--emerald-600)' : 'var(--red-600)'}; font-weight: bold;">${t.type === 'in' ? 'داخڵبوون (+)' : 'خەرجکردن (-)'}</span></td>
+                        <td><span style="padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; background: ${t.type === 'in' ? '#ecfdf5' : '#fef2f2'}; color: ${t.type === 'in' ? 'var(--emerald-600)' : 'var(--red-600)'};">${t.type === 'in' ? 'هاتن (+)' : 'دەروو (-)'}</span></td>
                         <td style="font-weight: bold;">${Number(t.amount).toLocaleString()} د.ع</td>
-                        <td>${t.desc || 'بێ تێبینی'}</td>
-                        <td style="font-size:0.75rem; color:var(--gray-500);">${new Date(t.timestamp).toLocaleTimeString('ku-IQ', {hour:'2-digit', minute:'2-digit'})}</td>
+                        <td>${t.desc || '-'}</td>
+                        <td style="font-size: 0.75rem; color: var(--gray-500);">${new Date(t.timestamp).toLocaleTimeString('ku-IQ', { hour: '2-digit', minute: '2-digit' })}</td>
                     </tr>
                 `;
             });
 
             document.getElementById('cb-opening').innerText = appState.cashBook.openingBalance.toLocaleString() + " د.ع";
-            document.getElementById('cb-in').innerText = cashIn.toLocaleString() + " د.ع";
-            document.getElementById('cb-out').innerText = cashOut.toLocaleString() + " د.ع";
-            document.getElementById('cb-final').innerText = (appState.cashBook.openingBalance + cashIn - cashOut).toLocaleString() + " د.ع";
+            document.getElementById('cb-in').innerText = totalIn.toLocaleString() + " د.ع";
+            document.getElementById('cb-out').innerText = totalOut.toLocaleString() + " د.ع";
+            document.getElementById('cb-final').innerText = (appState.cashBook.openingBalance + totalIn - totalOut).toLocaleString() + " د.ع";
         }
 
         async function saveManualCash(type) {
-            const amountElem = document.getElementById(type === 'in' ? 'cashbook-in-amount' : 'cashbook-out-amount');
-            const descElem = document.getElementById(type === 'in' ? 'cashbook-in-desc' : 'cashbook-out-desc');
-            const amount = Number(amountElem.value) || 0;
-            const desc = descElem.value.trim();
+            const amountInput = type === 'in' ? 'cashbook-in-amount' : 'cashbook-out-amount';
+            const descInput = type === 'in' ? 'cashbook-in-desc' : 'cashbook-out-desc';
+            const modalId = type === 'in' ? 'cash-in-modal' : 'cash-out-modal';
 
-            if (amount <= 0) return alert("تکایە بڕی پارە دیاری بکە!");
+            const amount = Number(document.getElementById(amountInput).value) || 0;
+            const desc = document.getElementById(descInput).value.trim();
+
+            if (amount <= 0) return alert("تکایە بڕی پارەکە بە دروستی داخڵ بکە!");
 
             await addDoc(collection(db, "cashbook"), { type, amount, desc, timestamp: Date.now() });
 
-            closeModal(type === 'in' ? 'cash-in-modal' : 'cash-out-modal');
-            amountElem.value = '';
-            descElem.value = '';
+            closeModal(modalId);
+            document.getElementById(amountInput).value = '';
+            document.getElementById(descInput).value = '';
         }
 
-        /* ================= یارمەتیدەرە گشتییەکان (Helpers) ================= */
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
     </script>
 </body>
 </html>
